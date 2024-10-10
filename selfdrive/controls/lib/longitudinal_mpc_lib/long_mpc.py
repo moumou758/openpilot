@@ -63,9 +63,9 @@ def get_jerk_factor(personality=custom.LongitudinalPersonalitySP.standard):
   elif personality==custom.LongitudinalPersonalitySP.standard:
     return 1.0
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    return 1.0
-  elif personality==custom.LongitudinalPersonalitySP.aggressive:
     return 0.5
+  elif personality==custom.LongitudinalPersonalitySP.aggressive:
+    return 0.33
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     return 0.1
   else:
@@ -89,17 +89,17 @@ def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
 
 def get_dynamic_personality(v_ego, personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    x_vel =  [0.,   11.9, 12.,  14.,  16.,  22.,  22.01,  36.1]
-    y_dist = [1.6,  1.6,  1.61, 1.61, 1.6,  1.6,  1.80,   1.80]
+    x_vel =  [0.,   22.,  22.01,  36.1]
+    y_dist = [1.70, 1.70, 1.80,   1.80]
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    x_vel =  [0.,   11.9, 12.,  14.,  16.,  22.,  22.01,  36.1]
-    y_dist = [1.5,  1.5,  1.51, 1.51, 1.5,  1.5,  1.60,   1.60]
+    x_vel =  [0.,   22.,  22.01,  36.1]
+    y_dist = [1.50, 1.50, 1.65,   1.65]
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    x_vel =  [0.,   11.9, 12.,  14.,  16.,  22.,  22.01,  36.1]
-    y_dist = [1.4,  1.4,  1.41, 1.41, 1.4,  1.4,  1.42,   1.42]
+    x_vel =  [0.,   22.,  22.01,  36.1]
+    y_dist = [1.30, 1.30, 1.45,   1.45]
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    x_vel =  [0.,    11.9,  12.,  14.,  16.,  22.,  22.01,  36.1]
-    y_dist = [1.133, 1.133, 1.14, 1.14, 1.13, 1.12, 1.20,   1.20]
+    x_vel =  [0.,   22.,  22.01,  36.1]
+    y_dist = [1.10, 1.10, 1.25,   1.25]
   else:
     raise NotImplementedError("Dynamic personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -248,6 +248,7 @@ def gen_long_ocp():
 
 class LongitudinalMpc:
   def __init__(self, mode='acc', dt=DT_MDL):
+    self.braking_offset = 1
     self.mode = mode
     self.dt = dt
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -303,6 +304,7 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=custom.LongitudinalPersonalitySP.standard):
     jerk_factor = get_jerk_factor(personality)
+    jerk_factor /= np.mean(self.braking_offset)
     if self.mode == 'acc':
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
       cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost, jerk_factor * J_EGO_COST]
@@ -369,6 +371,21 @@ class LongitudinalMpc:
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
+    lead = radarstate.leadOne
+
+    self.smoother_braking = True if (
+            self.mode == 'acc' and
+            np.any(v_ego < 16) and
+            np.any(lead_xv_0[:,0] < 40) and
+            not np.any(lead.dRel < (v_ego - 1) * t_follow)
+    ) else False
+
+    if self.smoother_braking:
+      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
+      self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
+      t_follow = t_follow / self.braking_offset
+    else:
+      self.braking_offset = 1
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
