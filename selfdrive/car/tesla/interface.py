@@ -40,7 +40,7 @@ class CarInterface(CarInterfaceBase):
       ret.enableBsm = True
 
     ret.steerLimitTimer = 1.0
-    ret.steerActuatorDelay = 0.25
+    ret.steerActuatorDelay = 0.1
     return ret
 
   def _update(self, c):
