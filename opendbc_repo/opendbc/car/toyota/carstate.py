@@ -152,7 +152,8 @@ class CarState(CarStateBase):
       ret.cruiseState.speedCluster = cluster_set_speed * conversion_factor
 
     if self.CP.carFingerprint in TSS2_CAR and not self.CP.flags & ToyotaFlags.DISABLE_RADAR.value:
-      self.acc_type = cp_acc.vl["ACC_CONTROL"]["ACC_TYPE"]
+       if not (self.CP.flags & ToyotaFlags.SMART_DSU.value):
+         self.acc_type = cp_acc.vl["ACC_CONTROL"]["ACC_TYPE"]
       ret.stockFcw = bool(cp_acc.vl["PCS_HUD"]["FCW"])
 
     # some TSS2 cars have low speed lockout permanently set, so ignore on those cars
@@ -184,13 +185,14 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint not in UNSUPPORTED_DSU_CAR:
       self.pcm_follow_distance = cp.vl["PCM_CRUISE_2"]["PCM_FOLLOW_DISTANCE"]
 
-    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU and not self.CP.flags & ToyotaFlags.RADAR_CAN_FILTER):
       # distance button is wired to the ACC module (camera or radar)
       prev_distance_button = self.distance_button
       self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
 
       ret.buttonEvents = create_button_events(self.distance_button, prev_distance_button, {1: ButtonType.gapAdjustCruise})
-
+    else:
+         self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
     return ret
 
   @staticmethod
@@ -235,17 +237,26 @@ class CarState(CarStateBase):
       pt_messages.append(("BSM", 1))
 
     if CP.carFingerprint in RADAR_ACC_CAR and not CP.flags & ToyotaFlags.DISABLE_RADAR.value:
-      pt_messages += [
-        ("PCS_HUD", 1),
-        ("ACC_CONTROL", 33),
-      ]
-
+       if not CP.flags & ToyotaFlags.SMART_DSU.value:
+         messages += [
+           ("ACC_CONTROL", 33),
+         ]
+       messages += [
+         ("PCS_HUD", 1),
+       ]
+      
     if CP.carFingerprint not in (TSS2_CAR - RADAR_ACC_CAR) and not CP.enableDsu and not CP.flags & ToyotaFlags.DISABLE_RADAR.value:
       pt_messages += [
         ("PRE_COLLISION", 33),
       ]
 
     cam_messages = []
+
+    if CP.flags & ToyotaFlags.SMART_DSU and not CP.flags & ToyotaFlags.RADAR_CAN_FILTER:
+       messages += [
+         ("SDSU", 100),
+       ]
+      
     if CP.carFingerprint != CAR.TOYOTA_PRIUS_V:
       cam_messages += [
         ("LKAS_HUD", 1),
