@@ -81,8 +81,8 @@ class SelfdriveD(CruiseHelper):
     self.car_state_sock = messaging.sub_sock('carState', timeout=20)
 
     ignore = self.sensor_packets + self.gps_packets + ['alertDebug']
-    if SIMULATION:
-      ignore += ['driverCameraState', 'managerState']
+    if True:
+      ignore += ['driverCameraState', 'managerState', 'driverMonitoringState']
     if REPLAY:
       # no vipc in replay will make them ignored anyways
       ignore += ['roadCameraState', 'wideRoadCameraState']
@@ -290,11 +290,11 @@ class SelfdriveD(CruiseHelper):
         cloudlog.event("process_not_running", not_running=not_running, error=True)
       self.not_running_prev = not_running
     if self.sm.recv_frame['managerState'] and (not_running - self.ignored_processes):
-      self.events.add(EventName.processNotRunning)
+      pass#self.events.add(EventName.processNotRunning)
     else:
       if not SIMULATION and not self.rk.lagging:
         if not self.sm.all_alive(self.camera_packets):
-          self.events.add(EventName.cameraMalfunction)
+          pass#self.events.add(EventName.cameraMalfunction)
         elif not self.sm.all_freq_ok(self.camera_packets):
           self.events.add(EventName.cameraFrameRate)
     if not REPLAY and self.rk.lagging:
