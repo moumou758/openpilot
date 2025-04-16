@@ -12,7 +12,7 @@ MAX_ACCEL_SPORT   = [2.00, 2.00, 1.98, 1.90, 1.30, 1.00, .72, .60, .48, .3]
 
 # Acceleration profile for minimum (braking) acceleration
 #MIN_ACCEL_ECO     = [-1.0, -1.0, -1.0, -1.0, -1.0]
-MIN_ACCEL_ECO     = [-0.062, -0.062, -0.08, -0.6, -1.2]
+MIN_ACCEL_ECO     = [-0.062, -0.062, -0.08, -1.2, -1.2]
 MIN_ACCEL_NORMAL  = [-0.064, -0.064, -0.09, -1.2, -1.2]
 MIN_ACCEL_SPORT   = [-0.068, -0.068, -0.10, -1.3, -1.3]
 MIN_ACCEL_STOCK   = [-1.2, -1.2, -1.2, -1.2, -1.2]
