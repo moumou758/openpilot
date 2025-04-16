@@ -6,7 +6,7 @@ See the LICENSE.md file in the root directory for more details.
 """
 
 # Acceleration profile for maximum allowed acceleration
-MAX_ACCEL_ECO     = [2.00, 1.90, 1.85, 1.52, 0.90, .59,  .48, .39, .32, .12]
+MAX_ACCEL_ECO     = [1.40, 1.20, 1.10, 1.00, 0.71, .54, .44, .32, .28, .09]
 MAX_ACCEL_NORMAL  = [2.00, 1.95, 1.85, 1.75, 1.10, .75,  .61, .50, .38, .2]
 MAX_ACCEL_SPORT   = [2.00, 2.00, 1.98, 1.90, 1.30, 1.00, .72, .60, .48, .3]
 
