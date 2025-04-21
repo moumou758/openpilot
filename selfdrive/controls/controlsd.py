@@ -84,7 +84,7 @@ class Controls:
     self.pm = messaging.PubMaster(['controlsState', 'carControl', 'onroadEvents', 'controlsStateSP'])
 
     self.sensor_packets = ["accelerometer", "gyroscope"]
-    self.camera_packets = ["roadCameraState", "wideRoadCameraState"]
+    self.camera_packets = ["roadCameraState", "driverCameraState", "wideRoadCameraState"]
 
     self.log_sock = messaging.sub_sock('androidLog')
 
@@ -98,7 +98,7 @@ class Controls:
 
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:
-      ignore += ['managerState']
+      ignore += ['driverCameraState', 'managerState']
     if REPLAY:
       # no vipc in replay will make them ignored anyways
       ignore += ['roadCameraState', 'wideRoadCameraState']
