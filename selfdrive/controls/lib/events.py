@@ -614,7 +614,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
       "请接管方向",
       "超过转向限制",
       AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.none, 1.),
+      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.promptRepeat, 1.),
   },
 
   # Thrown when the fan is driven at >50% but is not rotating
