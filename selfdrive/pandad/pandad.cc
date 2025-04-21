@@ -400,7 +400,7 @@ void process_peripheral_state(Panda *panda, PubMaster *pm, bool no_fan_control) 
       }
     }
 
-    if (False) {
+    if (sm.updated("driverCameraState")) {
       auto event = sm["driverCameraState"];
       int cur_integ_lines = event.getDriverCameraState().getIntegLines();
 
@@ -417,7 +417,7 @@ void process_peripheral_state(Panda *panda, PubMaster *pm, bool no_fan_control) 
     }
 
     // Disable IR on input timeout
-    if (False) {
+    if (nanos_since_boot() - last_driver_camera_t > 1e9) {
       ir_pwr = 0;
     }
 
