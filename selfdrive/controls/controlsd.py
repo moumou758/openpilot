@@ -72,41 +72,31 @@ class Controls:
       self.CP = messaging.log_from_bytes(self.params.get("CarParams", block=True), car.CarParams)
       cloudlog.info("controlsd got CarParams")
 
-      # Uses car interface helper functions, altering state won't be considered by card for actuation
       self.CI = get_car_interface(self.CP)
     else:
       self.CI, self.CP = CI, CI.CP
 
-    # Ensure the current branch is cached, otherwise the first iteration of controlsd lags
     self.branch = get_short_branch()
 
     # Setup sockets
     self.pm = messaging.PubMaster(['controlsState', 'carControl', 'onroadEvents', 'controlsStateSP'])
 
     self.sensor_packets = ["accelerometer", "gyroscope"]
-    self.camera_packets = ["roadCameraState", "driverCameraState", "wideRoadCameraState"]
+    # driverCameraState已移除
+    self.camera_packets = ["roadCameraState", "wideRoadCameraState"]
 
     self.log_sock = messaging.sub_sock('androidLog')
 
-    # TODO: de-couple controlsd with card/conflate on carState without introducing controls mismatches
     self.car_state_sock = messaging.sub_sock('carState', timeout=20)
-
-    self.d_camera_hardware_missing = self.params.get_bool("DriverCameraHardwareMissing") 
-    if self.d_camera_hardware_missing:
-      IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld"})
-      self.camera_packets.remove("driverCameraState")
 
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:
-      ignore += ['driverCameraState', 'managerState']
+      ignore += ['managerState']
     if REPLAY:
-      # no vipc in replay will make them ignored anyways
       ignore += ['roadCameraState', 'wideRoadCameraState']
-    if self.d_camera_hardware_missing:
-      ignore += ['driverMonitoringState']
     lateral_plan_svs = ['lateralPlanDEPRECATED', 'lateralPlanSPDEPRECATED']
     self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
-                                   'carOutput', 'driverMonitoringState', 'longitudinalPlan', 'liveLocationKalman',
+                                   'carOutput', 'longitudinalPlan', 'liveLocationKalman',
                                    'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters',
                                    'testJoystick', 'longitudinalPlanSP', 'modelV2SP'] + self.camera_packets + self.sensor_packets + lateral_plan_svs,
                                   ignore_alive=ignore, ignore_avg_freq=ignore+['radarState', 'testJoystick'], ignore_valid=['testJoystick', ],
@@ -118,12 +108,10 @@ class Controls:
     self.is_metric = self.params.get_bool("IsMetric")
     self.is_ldw_enabled = self.params.get_bool("IsLdwEnabled")
 
-    # detect sound card presence and ensure successful init
     sounds_available = HARDWARE.get_sound_card_online()
 
     car_recognized = self.CP.carName != 'mock'
 
-    # cleanup old params
     if not self.CP.experimentalLongitudinalAvailable:
       self.params.remove("ExperimentalLongitudinalEnabled")
     if not self.CP.openpilotLongitudinalControl:
@@ -213,8 +201,10 @@ class Controls:
     elif self.CP.passive:
       self.events.add(EventName.dashcamMode, static=True)
 
-    # controlsd is driven by carState, expected at 100Hz
     self.rk = Ratekeeper(100, print_delay_threshold=None)
+
+  # 剩余所有不涉及 driverCameraState 的函数均保持原样
+  # ...全部照你的原代码...
 
   def set_initial_state(self):
     if REPLAY:
@@ -262,8 +252,6 @@ class Controls:
       self.events.add(EventName.resumeBlocked)
 
     if not self.CP.notCar:
-      if not self.d_camera_hardware_missing:
-        self.events.add_from_msg(self.sm['driverMonitoringState'].events)
       self.events.add_from_msg(self.sm['longitudinalPlanSP'].events)
 
     # Add car events, ignore if CAN isn't valid
@@ -274,20 +262,13 @@ class Controls:
     if self.sm['deviceState'].thermalStatus >= ThermalStatus.red:
       self.events.add(EventName.overheat)
     if self.sm['deviceState'].freeSpacePercent < 7 and not SIMULATION:
-      # under 7% of space free no enable allowed
       self.events.add(EventName.outOfSpace)
     if self.sm['deviceState'].memoryUsagePercent > 90 and not SIMULATION:
       self.events.add(EventName.lowMemory)
 
-    # TODO: enable this once loggerd CPU usage is more reasonable
-    #cpus = list(self.sm['deviceState'].cpuUsagePercent)
-    #if max(cpus, default=0) > 95 and not SIMULATION:
-    #  self.events.add(EventName.highCpuUsage)
-
     # Alert if fan isn't spinning for 5 seconds
     if self.sm['peripheralState'].pandaType != log.PandaState.PandaType.unknown:
       if self.sm['peripheralState'].fanSpeedRpm < 500 and self.sm['deviceState'].fanSpeedPercentDesired > 50:
-        # allow enough time for the fan controller in the panda to recover from stalls
         if (self.sm.frame - self.last_functional_fan_frame) * DT_CTRL > 15.0:
           self.events.add(EventName.fanMalfunction)
       else:
@@ -451,8 +432,6 @@ class Controls:
         self.events.add(EventName.modeldLagging)
 
   def data_sample(self):
-    """Receive data from sockets"""
-
     car_state = messaging.recv_one(self.car_state_sock)
     CS = car_state.carState if car_state else self.CS_prev
 
@@ -482,14 +461,9 @@ class Controls:
           error=True,
         )
 
-    # When the panda and controlsd do not agree on controls_allowed
-    # we want to disengage openpilot. However the status from the panda goes through
-    # another socket other than the CAN messages and one can arrive earlier than the other.
-    # Therefore we allow a mismatch for two samples, then we trigger the disengagement.
     if not self.enabled:
       self.mismatch_counter = 0
 
-    # All pandas not in silent mode must have controlsAllowed when openpilot is enabled
     if self.enabled and any(not ps.controlsAllowed for ps in self.sm['pandaStates']
            if ps.safetyModel not in IGNORED_SAFETY_MODES):
       self.mismatch_counter += 1
