@@ -203,9 +203,6 @@ class Controls:
 
     self.rk = Ratekeeper(100, print_delay_threshold=None)
 
-  # 剩余所有不涉及 driverCameraState 的函数均保持原样
-  # ...全部照你的原代码...
-
   def set_initial_state(self):
     if REPLAY:
       controls_state = self.params.get("ReplayControlsState")
