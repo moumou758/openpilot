@@ -255,6 +255,8 @@ class Panda:
 
     # connect and set mcu type
     self.connect(claim)
+
+    # 确保IR功率始终为0
     self.set_ir_power(0)
 
   def __enter__(self):
