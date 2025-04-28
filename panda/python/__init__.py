@@ -256,9 +256,6 @@ class Panda:
     # connect and set mcu type
     self.connect(claim)
 
-    # 确保IR功率始终为0
-    self.set_ir_power(0)
-
   def __enter__(self):
     return self
 
@@ -909,7 +906,7 @@ class Panda:
 
   # ******************* IR *******************
   def set_ir_power(self, percentage):
-    self._handle.controlWrite(Panda.REQUEST_OUT, 0xb0, 0, 0, b'')
+    self._handle.controlWrite(Panda.REQUEST_OUT, 0xb0, int(percentage), 0, b'')
 
   # ******************* Fan ******************
   def set_fan_power(self, percentage):
