@@ -27,7 +27,7 @@ Last updated: July 29, 2024
 #pragma once
 #include "selfdrive/ui/ui.h"
 
-const float DRIVING_PATH_WIDE = 0.9;
+const float DRIVING_PATH_WIDE = 2.0;
 const float DRIVING_PATH_NARROW = 0.25;
 
 typedef struct UISceneSP : UIScene {
