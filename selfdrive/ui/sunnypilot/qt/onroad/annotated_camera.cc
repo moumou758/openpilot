@@ -445,7 +445,7 @@ void AnnotatedCameraWidgetSP::drawHud(QPainter &p) {
   drawRoundedRect(p, set_speed_rect, top_radius, top_radius, bottom_radius, bottom_radius);
 
   // Draw MAX
-  QColor max_color = QColor(0x80, 0xd8, 0xa6, 0xff);
+  QColor max_color = QColor(0x7f, 0xff, 0x00, 0xff);
   QColor set_speed_color = whiteColor();
   if (is_cruise_set) {
     if (status == STATUS_DISENGAGED) {
