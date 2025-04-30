@@ -1568,6 +1568,16 @@ Reboot Required.</source>
 需要重启。</translation>
     </message>
     <message>
+        <source>Enable Toyota Drive Mode Button</source>
+        <translation>启用丰田驾驶模式按钮</translation>
+    </message>
+    <message>
+        <source>Sunnypilot will link the Acceleration Personality to the car's physical drive mode selector.
+Reboot Required.</source>
+        <translation>Sunnypilot 将把加速特性与车辆的物理驾驶模式选择器连接。
+需要重启。</translation>
+    </message>
+    <message>
         <source>Volkswagen</source>
         <translation>大众</translation>
     </message>
@@ -2205,15 +2215,27 @@ Reboot Required.</source>
     </message>
     <message>
         <source>Display</source>
-        <translation>屏幕</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <source>Chime</source>
-        <translation>声音提醒</translation>
+        <translation>提示音</translation>
     </message>
     <message>
         <source>Speed Limit Warning</source>
         <translation>限速提醒</translation>
+    </message>
+    <message>
+        <source>Off: When the cruising speed is faster than the speed limit plus the offset, there will be no warning.</source>
+        <translation>关闭：当巡航速度高于限速加偏移值时，不会发出警告。</translation>
+    </message>
+    <message>
+        <source>Display: The speed on the speed limit sign turns red to alert the driver when the cruising speed is faster than the speed limit plus the offset.</source>
+        <translation>显示：当巡航速度高于限速加偏移值时，限速标志上的速度会变红以提醒驾驶员。</translation>
+    </message>
+    <message>
+        <source>Chime: The speed on the speed limit sign turns red and chimes to alert the driver when the cruising speed is faster than the speed limit plus the offset.</source>
+        <translation>提示音：当巡航速度高于限速加偏移值时，限速标志上的速度会变红并发出提示音以提醒驾驶员。</translation>
     </message>
     <message>
         <source>Warning with speed limit flash</source>
@@ -2480,6 +2502,14 @@ Reboot Required.</source>
     <message>
         <source>While in Auto Lane, switch to Laneless for current/future curves.</source>
         <translation>启用自动车道模式时，在弯道自动切换成无车道线模式。</translation>
+    </message>
+    <message>
+        <source>Overtaking Acceleration Assist</source>
+        <translation>超车加速辅助功能</translation>
+    </message>
+    <message>
+        <source>Overtaking Acceleration Assist will operate when the turn signal indicator is turned on to the left (left-hand drive) or turned on to the right (right-hand drive) while openpilot Longitudinal Control is operating.</source>
+        <translation>当openpilot纵向控制功能运行时，开启左转向灯（左舵驾驶）或右转向灯（右舵驾驶）时，超车加速辅助功能将被激活。</translation>
     </message>
     <message>
         <source>Speed Limit Control (SLC)</source>
