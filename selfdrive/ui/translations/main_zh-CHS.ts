@@ -1468,22 +1468,6 @@ This may take up to a minute.</source>
         <translation>Subaru</translation>
     </message>
     <message>
-        <source>Enable Stock Longitudinal Control (TACC)</source>
-        <translation>启用原车纵向控制 (TACC)</translation>
-    </message>
-    <message>
-        <source>sunnypilot will <b>not</b> take over control of gas and brakes. Stock Tesla longitudinal control (TACC) will be used.</source>
-        <translation>Sunnypilot <b>不会</b> 接管油门和刹车的控制。将使用特斯拉原车纵向控制 (TACC)。</translation>
-    </message>
-    <message>
-        <source>Virtual Torque Blending (Beta)</source>
-        <translation>虚拟扭矩融合 (Beta)</translation>
-    </message>
-    <message>
-        <source>Experimental feature to allow influencing of the steering angle while ALC is active. Note: ALC/ACC will no longer disengage by applying force to the wheel.</source>
-        <translation>实验性功能，允许在ALC激活时影响转向角度。注意：在对方向盘施力时，ALC/ACC将不再解除激活。</translation>
-    </message>
-    <message>
         <source>Manual Parking Brake: Stop and Go (Beta)</source>
         <translation>手动驻车制动：启停功能（测试版）</translation>
     </message>
