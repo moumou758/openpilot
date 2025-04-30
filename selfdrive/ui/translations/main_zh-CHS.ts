@@ -2226,16 +2226,12 @@ Reboot Required.</source>
         <translation>限速提醒</translation>
     </message>
     <message>
-        <source>Off: When the cruising speed is faster than the speed limit plus the offset, there will be no warning.</source>
-        <translation>关闭：当巡航速度高于限速加偏移值时，不会发出警告。</translation>
-    </message>
-    <message>
-        <source>Display: The speed on the speed limit sign turns red to alert the driver when the cruising speed is faster than the speed limit plus the offset.</source>
-        <translation>显示：当巡航速度高于限速加偏移值时，限速标志上的速度会变红以提醒驾驶员。</translation>
-    </message>
-    <message>
-        <source>Chime: The speed on the speed limit sign turns red and chimes to alert the driver when the cruising speed is faster than the speed limit plus the offset.</source>
-        <translation>提示音：当巡航速度高于限速加偏移值时，限速标志上的速度会变红并发出提示音以提醒驾驶员。</translation>
+        <source>Off: When the cruising speed is faster than the speed limit plus the offset, there will be no warning.
+Display: The speed on the speed limit sign turns red to alert the driver when the cruising speed is faster than the speed limit plus the offset.
+Chime: The speed on the speed limit sign turns red and chimes to alert the driver when the cruising speed is faster than the speed limit plus the offset.</source>
+        <translation>关闭：当巡航速度高于限速加偏移值时，不会发出警告。
+显示：当巡航速度高于限速加偏移值时，限速标志上的速度会变红以提醒驾驶员。
+提示音：当巡航速度高于限速加偏移值时，限速标志上的速度会变红并发出提示音以提醒驾驶员。</translation>
     </message>
     <message>
         <source>Warning with speed limit flash</source>
