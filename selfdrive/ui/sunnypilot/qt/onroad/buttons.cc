@@ -92,5 +92,5 @@ MapSettingsButton::MapSettingsButton(QWidget *parent) : QPushButton(parent) {
 
 void MapSettingsButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  drawCustomButtonIcon(p, 152, 152, settings_img, QColor(0, 0, 0, 166), isDown() ? 0.6 : 1.0);
+  drawCustomButtonIcon(p, 152, 152, settings_img, QColor(0, 0, 0, 166), isDown() ? 0.5 : 0.6);
 }
