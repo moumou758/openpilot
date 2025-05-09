@@ -82,11 +82,11 @@ def get_a_change_factor(v_ego, v_lead0, v_lead1, personality=custom.Longitudinal
     a_change_cost_multiplier_follow = 0.6  # Moderate cost for changing acceleration (quicker transitions compared to relaxed)
     a_change_cost_high_speed_factor = 2.5  # Higher penalty for changes at higher speeds (more cautious)
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    a_change_cost_multiplier_follow = 0.4  # Similar to standard (quicker transitions compared to relaxed)
-    a_change_cost_high_speed_factor = 3.0  # Similar to standard (higher penalty for high speeds)
+    a_change_cost_multiplier_follow = 0.6  # Similar to standard (quicker transitions compared to relaxed)
+    a_change_cost_high_speed_factor = 2.5  # Similar to standard (higher penalty for high speeds)
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    a_change_cost_multiplier_follow = 0.2  # Very low cost for changing acceleration, meaning quicker reactions (less cautious)
-    a_change_cost_high_speed_factor = 5.0  # Much higher penalty for abrupt changes at high speeds (very cautious at high speeds)
+    a_change_cost_multiplier_follow = 1.2  # Very low cost for changing acceleration, meaning quicker reactions (less cautious)
+    a_change_cost_high_speed_factor = 2.0  # Much higher penalty for abrupt changes at high speeds (very cautious at high speeds)
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     a_change_cost_multiplier_follow = 0.1  # Very low cost for changing acceleration, meaning quicker reactions (less cautious)
     a_change_cost_high_speed_factor = 5.0  # Much higher penalty for abrupt changes at high speeds (very cautious at high speeds)
@@ -143,13 +143,13 @@ def get_danger_zone_factor(personality=custom.LongitudinalPersonalitySP.standard
 
 def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    return 1.75
+    return 1.85
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    return 1.65
+    return 1.80
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    return 1.45
+    return 1.50
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    return 1.25
+    return 1.30
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     return 0.25
   else:
