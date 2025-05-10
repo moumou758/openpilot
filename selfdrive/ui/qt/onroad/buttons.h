@@ -29,10 +29,6 @@ private:
   Params params;
   QPixmap engage_img;
   QPixmap experimental_img;
-
-  bool rotating_wheel;
-
-  int steering_angle_deg;
 };
 
 void drawIcon(QPainter &p, const QPoint &center, const QPixmap &img, const QBrush &bg, float opacity);
