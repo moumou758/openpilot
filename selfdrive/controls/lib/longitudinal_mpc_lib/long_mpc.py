@@ -127,7 +127,7 @@ def get_a_change_factor(v_ego, v_lead0, v_lead1, personality=custom.Longitudinal
 def get_danger_zone_factor(personality=custom.LongitudinalPersonalitySP.standard):
   # Higher values mean more cautious driving in dangerous situations, scaling the cost accordingly
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    return 1.2  # Higher danger zone cost for relaxed personality (more cautious)
+    return 1.1  # Higher danger zone cost for relaxed personality (more cautious)
   elif personality==custom.LongitudinalPersonalitySP.standard:
     return 1.0  # Medium danger zone cost for standard personality
   elif personality==custom.LongitudinalPersonalitySP.moderate:
@@ -143,13 +143,13 @@ def get_danger_zone_factor(personality=custom.LongitudinalPersonalitySP.standard
 
 def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    return 1.2
+    return 1.25
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    return 1.0
+    return 1.10
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    return 1.0
+    return 1.10
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    return 1.0
+    return 1.10
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     return 0.25
   else:
