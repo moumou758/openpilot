@@ -30,6 +30,8 @@ private:
   QPixmap engage_img;
   QPixmap experimental_img;
 
+  bool rotating_wheel;
+
   int steering_angle_deg;
 };
 
