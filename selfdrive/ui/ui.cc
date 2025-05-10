@@ -319,7 +319,7 @@ void Device::setAwake(bool on) {
 
 void Device::resetInteractiveTimeout(int timeout) {
   if (timeout == -1) {
-    timeout = (ignition_on ? 120 : 360);
+    timeout = (ignition_on ? 360 : 360);
   }
   interactive_timeout = timeout * UI_FREQ;
 }
