@@ -36,8 +36,8 @@ X_EGO_OBSTACLE_COST = 3.
 X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
-J_EGO_COST = 5.0
-A_CHANGE_COST = 200.
+J_EGO_COST = 8.0
+A_CHANGE_COST = 300.
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .25
 LEAD_DANGER_FACTOR = 0.75
@@ -54,7 +54,7 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N) for idx in range(N+1
 T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
-COMFORT_BRAKE = 2.5
+COMFORT_BRAKE = 1.5
 STOP_DISTANCE = 6.0
 
 def get_jerk_factor(personality=custom.LongitudinalPersonalitySP.standard):
@@ -89,17 +89,17 @@ def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
 # Last updated: September 29, 2024
 def get_dynamic_personality(v_ego, personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    x_vel =  [0,    14.,   27.7]
-    y_dist = [1.75, 1.75,  2.00]
+    x_vel =  [0, 11, 14.5, 15, 20, 25, 30, 35, 40]
+    y_dist = [2.0, 2.0, 2.0, 2.2, 2.5, 2.8, 3.0, 3.0, 3.0]
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    x_vel =  [0,    14.,   27.7]
-    y_dist = [1.75, 1.75,  1.70]
+    x_vel =  [0, 11, 14.5, 15, 20, 25, 30, 35, 40]
+    y_dist = [1.8, 1.8, 1.8, 2.0, 2.2, 2.5, 2.7, 2.7, 2.7]
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    x_vel =  [0,    14.,   27.7]
-    y_dist = [1.45, 1.45,  1.48]
+    x_vel =  [0, 11, 14.5, 15, 20, 25, 30, 35, 40]
+    y_dist = [1.5, 1.5, 1.5, 1.8, 1.8, 2.2, 2.5, 2.5, 2.5]
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    x_vel =  [0,    14.,   27.7]
-    y_dist = [1.25, 1.25,  1.28]
+    x_vel =  [0, 5, 10, 15, 20, 25, 30]
+    y_dist = [1.3, 1.3, 1.3, 1.4, 1.6, 1.8, 1.8]
   else:
     raise NotImplementedError("Dynamic personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
