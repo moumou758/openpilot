@@ -84,7 +84,7 @@ class Controls:
     self.pm = messaging.PubMaster(['controlsState', 'carControl', 'onroadEvents', 'controlsStateSP'])
 
     self.sensor_packets = ["accelerometer", "gyroscope"]
-    self.camera_packets = ["roadCameraState", "driverCameraState", "wideRoadCameraState"]
+    self.camera_packets = ["roadCameraState", "wideRoadCameraState"]
 
     self.log_sock = messaging.sub_sock('androidLog')
 
@@ -92,9 +92,9 @@ class Controls:
     self.car_state_sock = messaging.sub_sock('carState', timeout=20)
 
     self.d_camera_hardware_missing = self.params.get_bool("DriverCameraHardwareMissing") 
-    if self.d_camera_hardware_missing:
+    if True:
       IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld"})
-      self.camera_packets.remove("driverCameraState")
+      
 
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:
