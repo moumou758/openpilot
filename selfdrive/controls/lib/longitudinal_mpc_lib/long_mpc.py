@@ -79,8 +79,8 @@ def get_a_change_factor(v_ego, v_lead0, v_lead1, personality=custom.Longitudinal
     a_change_cost_multiplier_follow = 1.2  # Highest cost for changing acceleration, meaning more gradual transitions
     a_change_cost_high_speed_factor = 2.0  # No extra penalty for high-speed changes (more cautious)
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    a_change_cost_multiplier_follow = 0.6  # Moderate cost for changing acceleration (quicker transitions compared to relaxed)
-    a_change_cost_high_speed_factor = 2.5  # Higher penalty for changes at higher speeds (more cautious)
+    a_change_cost_multiplier_follow = 1.2  # Moderate cost for changing acceleration (quicker transitions compared to relaxed)
+    a_change_cost_high_speed_factor = 2.0  # Higher penalty for changes at higher speeds (more cautious)
   elif personality==custom.LongitudinalPersonalitySP.moderate:
     a_change_cost_multiplier_follow = 0.6  # Similar to standard (quicker transitions compared to relaxed)
     a_change_cost_high_speed_factor = 2.5  # Similar to standard (higher penalty for high speeds)
@@ -127,13 +127,13 @@ def get_a_change_factor(v_ego, v_lead0, v_lead1, personality=custom.Longitudinal
 def get_danger_zone_factor(personality=custom.LongitudinalPersonalitySP.standard):
   # Higher values mean more cautious driving in dangerous situations, scaling the cost accordingly
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    return 1.2  # Higher danger zone cost for relaxed personality (more cautious)
+    return 1.8  # Higher danger zone cost for relaxed personality (more cautious)
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    return 1.1  # Medium danger zone cost for standard personality
+    return 1.3  # Medium danger zone cost for standard personality
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    return 1.1  # Medium danger zone cost for moderate personality (similar to standard)
+    return 1.2  # Medium danger zone cost for moderate personality (similar to standard)
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    return 1.1  # Lowest danger zone cost for aggressive personality (less cautious)
+    return 1.2  # Lowest danger zone cost for aggressive personality (less cautious)
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     return 1.0  # Lowest danger zone cost for aggressive personality (less cautious)
   else:
@@ -143,13 +143,13 @@ def get_danger_zone_factor(personality=custom.LongitudinalPersonalitySP.standard
 
 def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    return 1.25
+    return 1.80
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    return 1.25
+    return 1.55
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    return 1.20
+    return 1.50
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    return 1.10
+    return 1.20
   elif personality==custom.LongitudinalPersonalitySP.overtake:
     return 0.25
   else:
@@ -158,17 +158,17 @@ def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
 
 def get_dynamic_personality(v_ego, personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
-    x_vel =  [0, 5, 10, 15, 20, 25, 30]
-    y_dist = [1.3, 1.3, 1.3, 1.4, 1.6, 1.8, 1.8]
+    x_vel =  [0.,  11.1, 13., 19.7, 22.2, 22.7, 40.]
+    y_dist = [1.25, 1.25, 1.40, 1.40, 1.60, 1.75, 1.75]
   elif personality==custom.LongitudinalPersonalitySP.standard:
-    x_vel =  [0, 5, 10, 15, 20, 25, 30]
-    y_dist = [1.3, 1.3, 1.3, 1.4, 1.6, 1.8, 1.8]
+    x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
+    y_dist = [1.15, 1.15, 1.25, 1.25, 1.35, 1.35, 1.45, 1.45, 1.55]
   elif personality==custom.LongitudinalPersonalitySP.moderate:
-    x_vel =  [0, 5, 10, 15, 20, 25, 30]
-    y_dist = [1.3, 1.3, 1.3, 1.4, 1.6, 1.8, 1.8]
+    x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
+    y_dist = [1.15, 1.15, 1.25, 1.25, 1.35, 1.35, 1.45, 1.45, 1.50]
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
-    x_vel =  [0, 5, 10, 15, 20, 25, 30]
-    y_dist = [1.3, 1.3, 1.3, 1.4, 1.6, 1.8, 1.8]
+    x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
+    y_dist = [1.05, 1.05, 1.15, 1.15, 1.20, 1.20, 1.25, 1.25, 1.35]
   else:
     raise NotImplementedError("Dynamic personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
