@@ -159,13 +159,13 @@ def get_T_FOLLOW(personality=custom.LongitudinalPersonalitySP.standard):
 def get_dynamic_personality(v_ego, personality=custom.LongitudinalPersonalitySP.standard):
   if personality==custom.LongitudinalPersonalitySP.relaxed:
     x_vel =  [0.,  11.1, 13., 19.7, 22.2, 22.7, 40.]
-    y_dist = [1.25, 1.25, 1.40, 1.40, 1.60, 1.75, 1.75]
+    y_dist = [1.20, 1.20, 1.50, 1.50, 1.60, 1.75, 1.75]
   elif personality==custom.LongitudinalPersonalitySP.standard:
     x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
     y_dist = [1.15, 1.15, 1.25, 1.25, 1.35, 1.35, 1.45, 1.45, 1.55]
   elif personality==custom.LongitudinalPersonalitySP.moderate:
     x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
-    y_dist = [1.15, 1.15, 1.25, 1.25, 1.35, 1.35, 1.45, 1.45, 1.50]
+    y_dist = [1.10, 1.10, 1.15, 1.15, 1.30, 1.30, 1.45, 1.45, 1.50]
   elif personality==custom.LongitudinalPersonalitySP.aggressive:
     x_vel =  [0.,   6.,   7.,   14.,  14.5, 19.7, 20.2, 25.0, 40.]
     y_dist = [1.05, 1.05, 1.15, 1.15, 1.20, 1.20, 1.25, 1.25, 1.35]
