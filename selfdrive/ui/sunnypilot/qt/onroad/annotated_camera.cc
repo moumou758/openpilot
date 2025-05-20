@@ -1470,6 +1470,8 @@ void AnnotatedCameraWidgetSP::paintGL() {
   painter.setRenderHint(QPainter::Antialiasing);
   painter.setPen(Qt::NoPen);
 
+  rocketFuel(painter);
+
   if (s->scene.world_objects_visible) {
     sp_update_model(s, model);
     drawLaneLines(painter, s);
@@ -1486,8 +1488,6 @@ void AnnotatedCameraWidgetSP::paintGL() {
       if (lead_two.getStatus() && (std::abs(lead_one.getDRel() - lead_two.getDRel()) > 3.0)) {
         drawLead(painter, lead_two, s->scene.lead_vertices[1], 1, car_state, s->scene.chevron_data);
       }
-
-      rocketFuel(painter);
     }
   }
 
