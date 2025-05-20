@@ -1316,15 +1316,15 @@ void AnnotatedCameraWidgetSP::rocketFuel(QPainter &p) {
   UIState *s = uiState();
   float accel = (*s->sm)["carControl"].getCarControl().getActuators().getAccel();
   int widgetHeight = rect().height();
-  float halfHeightAbs = std::abs(accel) * widgetHeight / 2.0f;
-  const float scannerWidth = 15;
+  float halfHeightAbs = std::abs(accel) * widgetHeight / 2.0f * 0.6;
+  const float scannerWidth = 30;
   QRect scannerRect;
 
   if (accel > 0) {
-    p.setBrush(QColor(0, 245, 0, 200));
+    p.setBrush(QColor(0, 245, 0, 152));
     scannerRect = QRect(0, widgetHeight / 2 - halfHeightAbs, scannerWidth, halfHeightAbs);
   } else {
-    p.setBrush(QColor(245, 0, 0, 200));
+    p.setBrush(QColor(245, 0, 0, 152));
     scannerRect = QRect(0, widgetHeight / 2, scannerWidth, halfHeightAbs);
   }
 
