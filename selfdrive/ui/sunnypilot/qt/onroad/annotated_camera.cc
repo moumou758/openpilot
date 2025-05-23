@@ -1316,7 +1316,7 @@ void AnnotatedCameraWidgetSP::rocketFuel(QPainter &p) {
   UIState *s = uiState();
   float accel = (*s->sm)["carControl"].getCarControl().getActuators().getAccel();
   int widgetHeight = rect().height();
-  float halfHeightAbs = std::abs(accel) * widgetHeight / 2.0f * 0.8;
+  float halfHeightAbs = std::abs(accel) * widgetHeight / 2.0f;
   const float scannerWidth = 25;
   QRect scannerRect;
 
