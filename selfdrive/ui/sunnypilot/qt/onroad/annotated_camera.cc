@@ -441,7 +441,7 @@ void AnnotatedCameraWidgetSP::drawHud(QPainter &p) {
 
   QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, 45), set_speed_size);
   p.setPen(QPen(whiteColor(75), 6));
-  p.setBrush(blackColor(166));
+  p.setBrush(blackColor(152));
   drawRoundedRect(p, set_speed_rect, top_radius, top_radius, bottom_radius, bottom_radius);
 
   // Draw MAX
