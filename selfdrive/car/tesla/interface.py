@@ -39,7 +39,7 @@ class CarInterface(CarInterfaceBase):
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.tesla, flags)]
       ret.enableBsm = True
 
-    ret.steerLimitTimer = 1.0
+    ret.steerLimitTimer = 0.4
     ret.steerActuatorDelay = 0.1
     return ret
 
