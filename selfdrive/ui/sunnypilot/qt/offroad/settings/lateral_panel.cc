@@ -7,6 +7,8 @@
 
 #include "selfdrive/ui/sunnypilot/qt/offroad/settings/lateral_panel.h"
 
+#include <catch2/catch.hpp>
+
 #include "common/util.h"
 #include "selfdrive/ui/sunnypilot/qt/widgets/controls.h"
 
@@ -64,6 +66,25 @@ LateralPanel::LateralPanel(SettingsWindowSP *parent) : QFrame(parent) {
   list->addItem(vertical_space(0));
   list->addItem(horizontal_line());
 
+  // Blinker Pause Lateral Control
+  blinkerPauseToggle = new ParamControl(
+    "BlinkerPauseLateralControl",
+    tr("Pause Lateral Control with Blinker"),
+    tr("Pause lateral control with blinker when traveling below the desired speed selected."),
+    "");
+  QObject::connect(blinkerPauseToggle, &ToggleControl::toggleFlipped, [=](bool state) {
+    blinkerPauseSpeed->setEnabled(state);
+    blinkerPauseSpeed->refresh();
+  });
+  list->addItem(blinkerPauseToggle);
+
+  blinkerPauseSpeed = new BlinkerPauseLateralSpeed();
+  QObject::connect(blinkerPauseSpeed, &OptionControlSP::updateLabels, blinkerPauseSpeed, &BlinkerPauseLateralSpeed::refresh);
+  list->addItem(blinkerPauseSpeed);
+
+  list->addItem(vertical_space(0));
+  list->addItem(horizontal_line());
+  
   // Neural Network Lateral Control
   nnlcToggle = new NeuralNetworkLateralControl();
   list->addItem(nnlcToggle);
@@ -139,5 +160,8 @@ void LateralPanel::updateToggles(bool _offroad) {
 
   madsSettingsButton->setEnabled(madsToggle->isToggled());
 
+  blinkerPauseSpeed->setEnabled(blinkerPauseToggle->isToggled());
+  blinkerPauseSpeed->refresh();
+  
   offroad = _offroad;
 }
