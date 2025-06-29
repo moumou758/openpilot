@@ -120,7 +120,7 @@ class Controls:
     self.is_ldw_enabled = self.params.get_bool("IsLdwEnabled")
 
     # detect sound card presence and ensure successful init
-    sounds_available = HARDWARE.get_sound_card_online()
+    # sounds_available = HARDWARE.get_sound_card_online()
 
     car_recognized = self.CP.carName != 'mock'
 
