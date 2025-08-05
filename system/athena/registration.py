@@ -6,7 +6,7 @@ from pathlib import Path
 
 from datetime import datetime, timedelta
 from openpilot.common.api import api_get
-from openpilot.common.api.sunnylink import SunnylinkApi
+from openpilot.sunnypilot.sunnylink.api import SunnylinkApi
 from openpilot.common.params import Params
 from openpilot.common.spinner import Spinner
 from openpilot.selfdrive.selfdrived.alertmanager import set_offroad_alert
