@@ -9,7 +9,7 @@ from openpilot.common.api import api_get
 from openpilot.common.api.sunnylink import SunnylinkApi
 from openpilot.common.params import Params
 from openpilot.common.spinner import Spinner
-from openpilot.selfdrive.controls.lib.alertmanager import set_offroad_alert
+from openpilot.selfdrive.selfdrived.alertmanager import set_offroad_alert
 from openpilot.system.hardware import HARDWARE, PC
 from openpilot.system.hardware.hw import Paths
 from openpilot.common.swaglog import cloudlog
