@@ -58,6 +58,7 @@ def manager_init() -> None:
     ("CustomAccShortPressIncrement", "1"),
     ("DeviceBootMode", "0"),
     ("DisableUpdates", "0"),
+    ("DriverCameraHardwareMissing", "1"),
     ("DynamicExperimentalControl", "0"),
     ("DynamicModeldOutputs", "0"),
     ("HyundaiLongitudinalTuning", "0"),
