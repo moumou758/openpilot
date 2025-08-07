@@ -629,8 +629,11 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.doorOpen: {
-    ET.SOFT_DISABLE: user_soft_disable_alert("车门未关好"),
-    ET.NO_ENTRY: NoEntryAlert("车门未关好"),
+    ET.PERMANENT: Alert(
+      "车门未关好",
+      "",
+      AlertStatus.normal, AlertSize.none,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .1),
   },
 
   EventName.seatbeltNotLatched: {
