@@ -598,8 +598,11 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.wrongGear: {
-    ET.SOFT_DISABLE: user_soft_disable_alert("请切换到D档"),
-    ET.NO_ENTRY: NoEntryAlert("请切换到D档"),
+    ET.PERMANENT: Alert(
+      "请切换到D档",
+      "",
+      AlertStatus.normal, AlertSize.none,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .1),
   },
 
   # This alert is thrown when the calibration angles are outside of the acceptable range.
