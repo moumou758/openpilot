@@ -4,6 +4,7 @@ import time
 import threading
 
 import cereal.messaging as messaging
+import subprocess
 
 from cereal import car, log, custom
 from msgq.visionipc import VisionIpcClient, VisionStreamType
