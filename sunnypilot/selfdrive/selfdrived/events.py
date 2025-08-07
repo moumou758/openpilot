@@ -90,7 +90,7 @@ EVENTS_SP: dict[int, dict[str, Alert | AlertCallbackType]] = {
     ET.NO_ENTRY: Alert(
       "请切换到D档",
       "openpilot 暂不可用",
-      AlertStatus.normal, AlertSize.mid,
+      AlertStatus.normal, AlertSize.none,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, 0.),
   },
 
