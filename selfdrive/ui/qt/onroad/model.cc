@@ -252,61 +252,7 @@ void ModelRenderer::drawGaugeArc(QPainter &painter, qreal centerX, qreal centerY
 }
 
 void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
-    const qreal rectWidth = static_cast<qreal>(width);
-    const qreal rectHeight = static_cast<qreal>(height);
-
-    UIState *s = uiState();
-    if (!s || !s->sm) {
-        return; // Safety check
-    }
-
-    // Get current acceleration
-    const float currentAcceleration = (*s->sm)["carControl"].getCarControl().getActuators().getAccel();
-    const float absoluteAcceleration = std::abs(currentAcceleration);
-
-    // Calculate gauge position
-    const qreal centerX = rectWidth / 17;
-    const qreal centerY = rectHeight / 2 + 120;
-
-    // Draw gauge background
-    drawGaugeBackground(painter, centerX, centerY);
-
-    // Skip drawing arc if acceleration is too small
-    if (absoluteAcceleration <= MIN_THRESHOLD) {
-        drawGaugeArc(painter, centerX, centerY, 0.0f, true, "LONG");
-        return;
-    }
-
-    // Determine indicator color based on acceleration magnitude
-    const QColor indicatorColor = getIndicatorColor(absoluteAcceleration, 0.3f, 0.6f);
-
-    // Calculate span angle (scale for better visibility)
-    const int spanAngle = static_cast<int>(QUARTER_CIRCLE_SPAN * absoluteAcceleration);
-    const int clampedSpanAngle = std::clamp(spanAngle, 0, QUARTER_CIRCLE_SPAN);
-
-    // Draw the acceleration arc
-    QPen indicatorPen(indicatorColor);
-    indicatorPen.setWidth(GAUGE_PEN_WIDTH);
-    indicatorPen.setCapStyle(Qt::RoundCap);
-    painter.setPen(indicatorPen);
-
-    const QRectF arcRect(centerX - GAUGE_SIZE / 2, centerY - GAUGE_SIZE / 2,
-                        GAUGE_SIZE, GAUGE_SIZE);
-
-    // Draw arc based on acceleration direction
-    if (currentAcceleration > 0) {
-        painter.drawArc(arcRect, STARTING_ANGLE, -clampedSpanAngle); // Left side for positive
-    } else {
-        painter.drawArc(arcRect, STARTING_ANGLE, clampedSpanAngle);  // Right side for negative
-    }
-
-    // Draw center label
-    painter.setPen(Qt::white);
-    QFont font = painter.font();
-    font.setPixelSize(20);
-    font.setBold(true);
-    painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, "LONG");
+    return;
 }
 
 void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
