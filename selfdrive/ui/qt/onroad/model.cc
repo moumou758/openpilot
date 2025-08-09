@@ -245,10 +245,10 @@ void ModelRenderer::drawGaugeArc(QPainter &painter, qreal centerX, qreal centerY
     // Draw center label
     painter.setPen(Qt::white);
     QFont font = painter.font();
-    font.setPixelSize(40);
+    font.setPixelSize(20);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 200, 40), Qt::AlignCenter, label);
+    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, label);
 }
 
 void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
@@ -308,10 +308,10 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     // Draw center label
     painter.setPen(Qt::white);
     QFont font = painter.font();
-    font.setPixelSize(20);
+    font.setPixelSize(40);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, "LAT");
+    painter.drawText(QRectF(centerX - 50, centerY + 10, 200, 40), Qt::AlignCenter, "LAT");
 }
 
 void ModelRenderer::drawLead(QPainter &painter, const cereal::RadarState::LeadData::Reader &lead_data,
