@@ -245,10 +245,10 @@ void ModelRenderer::drawGaugeArc(QPainter &painter, qreal centerX, qreal centerY
     // Draw center label
     painter.setPen(Qt::white);
     QFont font = painter.font();
-    font.setPixelSize(20);
+    font.setPixelSize(40);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, label);
+    painter.drawText(QRectF(centerX - 50, centerY + 10, 200, 40), Qt::AlignCenter, label);
 }
 
 void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
