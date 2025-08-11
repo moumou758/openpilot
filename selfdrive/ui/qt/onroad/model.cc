@@ -311,7 +311,7 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     font.setPixelSize(40);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 200, 40), Qt::AlignCenter, "LAT");
+    painter.drawText(QRectF(centerX - 100, centerY + 20, 200, 40), Qt::AlignCenter, "LAT");
 }
 
 void ModelRenderer::drawLead(QPainter &painter, const cereal::RadarState::LeadData::Reader &lead_data,
