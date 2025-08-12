@@ -269,7 +269,7 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     const float absoluteLateral = std::abs(currentLateral);
 
     // Calculate gauge position
-    const qreal centerX = rectWidth / 17;
+    const qreal centerX = rectWidth / 17 + 20;
     const qreal centerY = rectHeight / 2 - 120;
 
     // Draw gauge background
