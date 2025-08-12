@@ -17,7 +17,7 @@ from openpilot.common.swaglog import cloudlog
 UNREGISTERED_DONGLE_ID = "UnregisteredDevice"
 
 def is_registered_device() -> bool:
-  dongle = Params().get("DongleId", encoding='utf-8')
+  dongle = Params().get("DongleId")
   return dongle not in (None, UNREGISTERED_DONGLE_ID)
 
 
@@ -33,7 +33,7 @@ def register(show_spinner=False) -> str | None:
   """
   params = Params()
 
-  dongle_id: str | None = params.get("DongleId", encoding='utf8')
+  dongle_id: str | None = params.get("DongleId")
   if dongle_id is None and Path(Paths.persist_root()+"/comma/dongle_id").is_file():
     # not all devices will have this; added early in comma 3X production (2/28/24)
     with open(Paths.persist_root()+"/comma/dongle_id") as f:
@@ -58,6 +58,7 @@ def register(show_spinner=False) -> str | None:
     start_time = time.monotonic()
     imei1='865420071781912'
     imei2='865420071781904'
+
     while imei1 is None and imei2 is None:
       try:
         imei1, imei2 = HARDWARE.get_imei(0), HARDWARE.get_imei(1)
@@ -74,7 +75,7 @@ def register(show_spinner=False) -> str | None:
       try:
         register_token = jwt.encode({'register': True, 'exp': datetime.now(UTC).replace(tzinfo=None) + timedelta(hours=1)}, private_key, algorithm='RS256')
         cloudlog.info("getting pilotauth")
-        resp = api_get("v2/pilotauth/", method='POST', timeout=15,
+        resp = api_get("v2/pilotauth/", method='POST', verify=False,timeout=15,
                        imei=imei1, imei2=imei2, serial=serial, public_key=public_key, register_token=register_token)
 
         if resp.status_code in (402, 403):
@@ -98,7 +99,7 @@ def register(show_spinner=False) -> str | None:
 
   if dongle_id:
     params.put("DongleId", dongle_id)
-    #set_offroad_alert("Offroad_UnofficialHardware", (dongle_id == UNREGISTERED_DONGLE_ID) and not PC)
+    #set_offroad_alert("Offroad_UnregisteredHardware", (dongle_id == UNREGISTERED_DONGLE_ID) and not PC)
   return dongle_id
 
 
