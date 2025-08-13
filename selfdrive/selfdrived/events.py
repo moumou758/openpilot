@@ -75,12 +75,12 @@ def startup_master_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubM
   return StartupAlert("请注意路况，安全驾驶", branch, alert_status=AlertStatus.userPrompt)
 
 def below_engage_speed_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int, personality) -> Alert:
-  return NoEntryAlert(f"请保持 {get_display_speed(CP.minEnableSpeed, metric)} 以上以启用辅助驾驶")
+  return NoEntryAlert(f"请保持 {get_display_speed(CP.minEnableSpeed, metric)} 以上行驶以启用辅助驾驶")
 
 
 def below_steer_speed_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int, personality) -> Alert:
   return Alert(
-    f" {get_display_speed(CP.minSteerSpeed, metric)} 以下无法自动转向",
+    f" {get_display_speed(CP.minSteerSpeed, metric)} 以下行驶时无法自动转向",
     "",
     AlertStatus.userPrompt, AlertSize.small,
     Priority.LOW, VisualAlert.steerRequired, AudibleAlert.prompt, 0.4)
@@ -414,7 +414,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
 
   EventName.laneChangeBlocked: {
     ET.WARNING: Alert(
-      "盲区检测到车辆",
+      "盲区检测到障碍",
       "",
       AlertStatus.userPrompt, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.prompt, .1),
