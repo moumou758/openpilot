@@ -148,7 +148,8 @@ void HudRenderer::draw(QPainter &p, const QRect &surface_rect) {
     drawVisionTurnControl(p, surface_rect);
   }
 
-  drawCurrentSpeed(p, surface_rect);
+  // 隐藏当前车速显示
+  // drawCurrentSpeed(p, surface_rect);
 
   p.restore();
 }
