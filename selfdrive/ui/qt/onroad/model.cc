@@ -329,10 +329,10 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     drawGaugeBackground(painter, centerX, centerY);
 
     // Skip drawing arc if lateral force is too small
-    if (absoluteLateral <= 0.1f) {
-        drawGaugeArc(painter, centerX, centerY, 0.0f, true, "LAT");
-        return;
-    }
+    // if (absoluteLateral <= 0.1f) {
+    //     drawGaugeArc(painter, centerX, centerY, 0.0f, true, "LAT");
+    //     return;
+    // }
 
     // Determine indicator color based on lateral force magnitude
     const QColor indicatorColor = getIndicatorColor(absoluteLateral, 5.0f, 15.0f);
