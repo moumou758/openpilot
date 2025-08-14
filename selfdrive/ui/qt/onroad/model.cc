@@ -129,7 +129,7 @@ void ModelRenderer::drawPath(QPainter &painter, const cereal::ModelDataV2::Reade
   painter.setBrush(bg);
   painter.drawPolygon(track_vertices);
 
-  LongFuel(painter,height, width);
+  // LongFuel(painter,height, width);   // 隐藏显示Long
   LateralFuel(painter, height, width);
 }
 
