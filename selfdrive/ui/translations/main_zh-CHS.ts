@@ -393,7 +393,7 @@ This only toggles the visibility of the controls; it does not toggle the actual 
     </message>
     <message>
         <source>openpilot is continuously calibrating, resetting is rarely required. Resetting calibration will restart openpilot if the car is powered on.</source>
-        <translation>openpilot 会持续进行校准，因此很少需要重置。如果车辆电源已开启，重置校准会重新启动 openpilot。</translation>
+        <translation>openpilot 会持续进行校准，因此很少需要重置。如果车辆电源已开启，重置校准需要重新启动 openpilot。</translation>
     </message>
     <message>
         <source>
