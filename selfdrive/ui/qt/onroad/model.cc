@@ -82,7 +82,7 @@ void ModelRenderer::update_model(const cereal::ModelDataV2::Reader &model, const
 void ModelRenderer::drawLaneLines(QPainter &painter) {
   // lanelines
   for (int i = 0; i < std::size(lane_line_vertices); ++i) {
-    painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, std::clamp<float>(lane_line_probs[i], 0.0, 0.7)));
+    painter.setBrush(QColor::fromRgbF(0.0, 0.8, 0.0, std::clamp<float>(lane_line_probs[i], 0.0, 0.7)));
     painter.drawPolygon(lane_line_vertices[i]);
   }
 
@@ -265,7 +265,7 @@ void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
     const float absoluteAcceleration = std::abs(currentAcceleration);
 
     // Calculate gauge position
-    const qreal centerX = rectWidth / 17;
+    const qreal centerX = rectWidth / 17+ 20;
     const qreal centerY = rectHeight / 2 + 120;
 
     // Draw gauge background
@@ -303,10 +303,10 @@ void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
     // Draw center label
     painter.setPen(Qt::white);
     QFont font = painter.font();
-    font.setPixelSize(20);
+    font.setPixelSize(40);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, "LONG");
+    painter.drawText(QRectF(centerX - 100, centerY, 200, 40), Qt::AlignCenter, "LONG");
 }
 
 void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
@@ -323,7 +323,7 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     const float absoluteLateral = std::abs(currentLateral);
 
     // Calculate gauge position
-    const qreal centerX = rectWidth / 17;
+    const qreal centerX = rectWidth / 17+ 20;
     const qreal centerY = rectHeight / 2 - 120;
 
     // Draw gauge background
@@ -362,10 +362,10 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
     // Draw center label
     painter.setPen(Qt::white);
     QFont font = painter.font();
-    font.setPixelSize(20);
+    font.setPixelSize(40);
     font.setBold(true);
     painter.setFont(font);
-    painter.drawText(QRectF(centerX - 50, centerY + 10, 100, 20), Qt::AlignCenter, "LAT");
+    painter.drawText(QRectF(centerX - 100, centerY, 200, 40), Qt::AlignCenter, "LAT");
 }
 
 void ModelRenderer::drawLead(QPainter &painter, const cereal::RadarState::LeadData::Reader &lead_data,
