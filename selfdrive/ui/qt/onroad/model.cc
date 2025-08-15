@@ -318,45 +318,38 @@ void ModelRenderer::LateralFuel(QPainter &painter, int height, int width) {
         return; // Safety check
     }
 
-    // Get current steering angle
+    // 获取当前方向盘转角
     const float currentLateral = (*s->sm)["carState"].getCarState().getSteeringAngleDeg();
     const float absoluteLateral = std::abs(currentLateral);
 
-    // Calculate gauge position
-    const qreal centerX = rectWidth / 17+ 20;
+    // 计算表盘中心位置
+    const qreal centerX = rectWidth / 17 + 20;
     const qreal centerY = rectHeight / 2 - 120;
 
-    // Draw gauge background
+    // 1. 始终绘制背景
     drawGaugeBackground(painter, centerX, centerY);
 
-    // Skip drawing arc if lateral force is too small
-    if (absoluteLateral <= 0.1f) {
-        drawGaugeArc(painter, centerX, centerY, 0.0f, true, "LAT");
-        return;
-    }
+    // 2. 仅在转角足够大时绘制方向/大小变化的圆弧
+    if (absoluteLateral > 0.1f) {
+        const QColor indicatorColor = getIndicatorColor(absoluteLateral, 5.0f, 15.0f);
 
-    // Determine indicator color based on lateral force magnitude
-    const QColor indicatorColor = getIndicatorColor(absoluteLateral, 5.0f, 15.0f);
+        const float maxSteeringAngle = 15.0f;
+        const int spanAngle = static_cast<int>(QUARTER_CIRCLE_SPAN * (absoluteLateral / maxSteeringAngle));
+        const int clampedSpanAngle = std::clamp(spanAngle, 0, QUARTER_CIRCLE_SPAN);
 
-    // Calculate span angle (normalized to max expected steering angle)
-    const float maxSteeringAngle = 15.0f; // Adjust based on your vehicle's characteristics
-    const int spanAngle = static_cast<int>(QUARTER_CIRCLE_SPAN * (absoluteLateral / maxSteeringAngle));
-    const int clampedSpanAngle = std::clamp(spanAngle, 0, QUARTER_CIRCLE_SPAN);
+        QPen indicatorPen(indicatorColor);
+        indicatorPen.setWidth(GAUGE_PEN_WIDTH);
+        indicatorPen.setCapStyle(Qt::RoundCap);
+        painter.setPen(indicatorPen);
 
-    // Draw the lateral arc
-    QPen indicatorPen(indicatorColor);
-    indicatorPen.setWidth(GAUGE_PEN_WIDTH);
-    indicatorPen.setCapStyle(Qt::RoundCap);
-    painter.setPen(indicatorPen);
+        const QRectF arcRect(centerX - GAUGE_SIZE / 2, centerY - GAUGE_SIZE / 2,
+                            GAUGE_SIZE, GAUGE_SIZE);
 
-    const QRectF arcRect(centerX - GAUGE_SIZE / 2, centerY - GAUGE_SIZE / 2,
-                        GAUGE_SIZE, GAUGE_SIZE);
-
-    // Draw arc based on steering direction
-    if (currentLateral < 0) {
-        painter.drawArc(arcRect, STARTING_ANGLE, -clampedSpanAngle); // Left turn
-    } else {
-        painter.drawArc(arcRect, STARTING_ANGLE, clampedSpanAngle);  // Right turn
+        if (currentLateral < 0) {
+            painter.drawArc(arcRect, STARTING_ANGLE, -clampedSpanAngle); // 左转
+        } else {
+            painter.drawArc(arcRect, STARTING_ANGLE, clampedSpanAngle);  // 右转
+        }
     }
 
     // Draw center label
