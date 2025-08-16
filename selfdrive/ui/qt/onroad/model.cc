@@ -259,47 +259,41 @@ void ModelRenderer::LongFuel(QPainter &painter, int height, int width) {
         return; // Safety check
     }
 
-    // Get current acceleration
+    // 1. 获取当前加速度
     const float currentAcceleration = (*s->sm)["carControl"].getCarControl().getActuators().getAccel();
     const float absoluteAcceleration = std::abs(currentAcceleration);
 
-    // Calculate gauge position
+    // 2. 计算表盘中心位置
     const qreal centerX = rectWidth / 17 + 20;
     const qreal centerY = rectHeight / 2 + 120;
 
-    // Draw gauge background
+    // 3. 始终绘制背景
     drawGaugeBackground(painter, centerX, centerY);
 
-    // Skip drawing arc if acceleration is too small
-    if (absoluteAcceleration <= MIN_THRESHOLD) {
-        drawGaugeArc(painter, centerX, centerY, 0.0f, true, "LONG");
-        return;
+    // 4. 仅在大于阈值时绘制圆弧
+    if (absoluteAcceleration > MIN_THRESHOLD) {
+        // 颜色
+        const QColor indicatorColor = getIndicatorColor(absoluteAcceleration, 0.3f, 0.6f);
+        // 角度
+        const int spanAngle = static_cast<int>(QUARTER_CIRCLE_SPAN * absoluteAcceleration);
+        const int clampedSpanAngle = std::clamp(spanAngle, 0, QUARTER_CIRCLE_SPAN);
+
+        QPen indicatorPen(indicatorColor);
+        indicatorPen.setWidth(GAUGE_PEN_WIDTH);
+        indicatorPen.setCapStyle(Qt::RoundCap);
+        painter.setPen(indicatorPen);
+
+        const QRectF arcRect(centerX - GAUGE_SIZE / 2, centerY - GAUGE_SIZE / 2,
+                            GAUGE_SIZE, GAUGE_SIZE);
+
+        if (currentAcceleration > 0) {
+            painter.drawArc(arcRect, STARTING_ANGLE, -clampedSpanAngle); // Left side for positive
+        } else {
+            painter.drawArc(arcRect, STARTING_ANGLE, clampedSpanAngle);  // Right side for negative
+        }   
     }
 
-    // Determine indicator color based on acceleration magnitude
-    const QColor indicatorColor = getIndicatorColor(absoluteAcceleration, 0.3f, 0.6f);
-
-    // Calculate span angle (scale for better visibility)
-    const int spanAngle = static_cast<int>(QUARTER_CIRCLE_SPAN * absoluteAcceleration);
-    const int clampedSpanAngle = std::clamp(spanAngle, 0, QUARTER_CIRCLE_SPAN);
-
-    // Draw the acceleration arc
-    QPen indicatorPen(indicatorColor);
-    indicatorPen.setWidth(GAUGE_PEN_WIDTH);
-    indicatorPen.setCapStyle(Qt::RoundCap);
-    painter.setPen(indicatorPen);
-
-    const QRectF arcRect(centerX - GAUGE_SIZE / 2, centerY - GAUGE_SIZE / 2,
-                        GAUGE_SIZE, GAUGE_SIZE);
-
-    // Draw arc based on acceleration direction
-    if (currentAcceleration > 0) {
-        painter.drawArc(arcRect, STARTING_ANGLE, -clampedSpanAngle); // Left side for positive
-    } else {
-        painter.drawArc(arcRect, STARTING_ANGLE, clampedSpanAngle);  // Right side for negative
-    }
-
-    // Draw center label
+    // 5. 始终绘制中心标签
     painter.setPen(Qt::white);
     QFont font = painter.font();
     font.setPixelSize(30);
