@@ -157,11 +157,11 @@ void HudRenderer::drawSetSpeed(QPainter &p, const QRect &surface_rect) {
   // Draw outer box + border to contain set speed
   const QSize default_size = {172, 204};
   QSize set_speed_size = is_metric ? QSize(200, 204) : default_size;
-  QRect set_speed_rect(QPoint(40 + (default_size.width() - set_speed_size.width()) / 2, 45), set_speed_size);
+  QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, 45), set_speed_size);
 
   // Draw set speed box
   p.setPen(QPen(QColor(255, 255, 255, 75), 6));
-  p.setBrush(QColor(0, 0, 0, 166));
+  p.setBrush(QColor(0, 0, 0, 152));
   p.drawRoundedRect(set_speed_rect, 32, 32);
 
   // Colors based on status
@@ -174,7 +174,7 @@ void HudRenderer::drawSetSpeed(QPainter &p, const QRect &surface_rect) {
     } else if (status == STATUS_OVERRIDE) {
       max_color = QColor(0x91, 0x9b, 0x95, 0xff);
     } else {
-      max_color = QColor(0x80, 0xd8, 0xa6, 0xff);
+      max_color = QColor(0x7f, 0xff, 0x00, 0xff);
 
       // Speed limit color interpolation
       if (slc_speed_limit > 0) {
@@ -192,7 +192,7 @@ void HudRenderer::drawSetSpeed(QPainter &p, const QRect &surface_rect) {
   // Draw "MAX" text
   p.setFont(InterFont(40, QFont::DemiBold));
   p.setPen(max_color);
-  p.drawText(set_speed_rect.adjusted(0, 27, 0, 0), Qt::AlignTop | Qt::AlignHCenter, tr("MAX"));
+  p.drawText(set_speed_rect.adjusted(0, 20, 0, 0), Qt::AlignTop | Qt::AlignHCenter, tr("MAX"));
 
   // Draw set speed
   QString setSpeedStr = is_cruise_set ? QString::number(std::nearbyint(set_speed)) : "–";
@@ -480,8 +480,9 @@ void HudRenderer::drawSLCStateIndicator(QPainter &p, const QRect &surface_rect) 
 }
 
 void HudRenderer::drawRoadName(QPainter &p, const QRect &surface_rect) {
-  if (road_name.isEmpty()) return;
-
+  if (road_name.isEmpty() || road_name.compare("None", Qt::CaseInsensitive) == 0)
+    return;
+  
   // Set font first to measure text
   p.setFont(InterFont(40, QFont::Normal));
   QFontMetrics fm(p.font());
