@@ -29,201 +29,123 @@ MIN_ACCEL_PROFILES = {
 }
 MIN_ACCEL_BREAKPOINTS =       [0.,  5.,  50.]
 
+
 def get_T_FOLLOW_vibe(personality):
-  """Get base T_FOLLOW value for each personality"""
-  if personality == LongPersonality.relaxed:
-    return 1.75
-  elif personality == LongPersonality.standard:
-    return 1.45
-  elif personality == LongPersonality.aggressive:
-    return 1.25
-  else:
-    return 1.45  # default to standard
+    """Get base T_FOLLOW value for each personality"""
+    return {
+        LongPersonality.relaxed: 1.75,
+        LongPersonality.standard: 1.45,
+        LongPersonality.aggressive: 1.25
+    }[personality]
+
 
 def get_dynamic_personality(v_ego, personality):
-  """Adjust T_FOLLOW based on vehicle speed (scales 0.75-1.0 from 0-36 m/s)."""
-  scale_factor = np.clip(np.interp(v_ego, [0, 36], [0.75, 1.0]), 0.75, 1.0)
-  return get_T_FOLLOW_vibe(personality) * scale_factor
+    """Adjust T_FOLLOW based on vehicle speed"""
+    scale_factor = np.interp(v_ego, [0, 36], [0.75, 1.0])
+    return get_T_FOLLOW_vibe(personality) * scale_factor
+
 
 class VibePersonalityController:
-  """
-  Controller for managing separated acceleration and distance controls:
-  - AccelPersonality controls acceleration behavior (eco, normal, sport)
-  - LongPersonality controls braking and following distance (relaxed, standard, aggressive)
-  """
+    """Controller for acceleration and distance personalities"""
 
-  def __init__(self):
-    self.params = Params()
-    self.frame = 0
+    def __init__(self):
+        self.params = Params()
+        self.frame = 0
+        self.accel_personality = AccelPersonality.normal
+        self.long_personality = LongPersonality.standard
+        self.param_keys = {
+            'accel_personality': 'AccelPersonality',
+            'long_personality': 'LongitudinalPersonality',
+            'enabled': 'VibePersonalityEnabled',
+            'accel_enabled': 'VibeAccelPersonalityEnabled',
+            'follow_enabled': 'VibeFollowPersonalityEnabled'
+        }
 
-    # Separate personalities for acceleration and distance control
-    self.accel_personality = AccelPersonality.normal
-    self.long_personality = LongPersonality.standard
+    def _update_from_params(self):
+        """Update personalities from params"""
+        if self.frame % int(1. / DT_MDL) != 0:
+            return
 
-    # Parameter keys
-    self.param_keys = {
-      'accel_personality': 'AccelPersonality',        # eco=0, normal=1, sport=2
-      'long_personality': 'LongitudinalPersonality',  # relaxed=0, standard=1, aggressive=2
-      'enabled': 'VibePersonalityEnabled',
-      'accel_enabled': 'VibeAccelPersonalityEnabled',
-      'follow_enabled': 'VibeFollowPersonalityEnabled'
-    }
+        accel_personality_int = int(self.params.get(self.param_keys['accel_personality']))
+        self.accel_personality = accel_personality_int
 
-  def _update_from_params(self):
-    """Update personalities from params (rate limited)"""
-    if self.frame % int(1. / DT_MDL) != 0:
-      return
+        long_personality_int = int(self.params.get(self.param_keys['long_personality']))
+        self.long_personality = long_personality_int
 
-    # Update AccelPersonality
-    try:
-      accel_personality_str = self.params.get(self.param_keys['accel_personality'], encoding='utf-8')
-      if accel_personality_str:
-        accel_personality_int = int(accel_personality_str)
-        if accel_personality_int in [AccelPersonality.eco, AccelPersonality.normal, AccelPersonality.sport]:
-          self.accel_personality = accel_personality_int
-    except (ValueError, TypeError):
-      pass
+    def _get_toggle_state(self, key: str) -> bool:
+        return self.params.get_bool(self.param_keys[key])
 
-    # Update LongPersonality
-    try:
-      long_personality_str = self.params.get(self.param_keys['long_personality'], encoding='utf-8')
-      if long_personality_str:
-        long_personality_int = int(long_personality_str)
-        if long_personality_int in [LongPersonality.relaxed, LongPersonality.standard, LongPersonality.aggressive]:
-          self.long_personality = long_personality_int
-    except (ValueError, TypeError):
-      pass
+    def _set_toggle_state(self, key: str, value: bool):
+        self.params.put_bool(self.param_keys[key], value)
 
-  def _get_toggle_state(self, key: str, default: bool = True) -> bool:
-    """Get toggle state with default fallback"""
-    return self.params.get_bool(self.param_keys.get(key, key)) if key in self.param_keys else default
+    def set_accel_personality(self, personality: int) -> bool:
+        self.accel_personality = personality
+        self.params.put(self.param_keys['accel_personality'], str(personality))
+        return True
 
-  def _set_toggle_state(self, key: str, value: bool):
-    """Set toggle state in params"""
-    if key in self.param_keys:
-      self.params.put_bool(self.param_keys[key], value)
+    def cycle_accel_personality(self) -> int:
+        personalities = [AccelPersonality.eco, AccelPersonality.normal, AccelPersonality.sport]
+        current_idx = personalities.index(self.accel_personality)
+        next_personality = personalities[(current_idx + 1) % len(personalities)]
+        self.set_accel_personality(next_personality)
+        return int(next_personality)
 
-  # AccelPersonality Management (for acceleration)
-  def set_accel_personality(self, personality: int) -> bool:
-    """Set AccelPersonality (eco=0, normal=1, sport=2)"""
-    if personality in [AccelPersonality.eco, AccelPersonality.normal, AccelPersonality.sport]:
-      self.accel_personality = personality
-      self.params.put(self.param_keys['accel_personality'], str(personality))
-      return True
-    return False
+    def get_accel_personality(self) -> int:
+        self._update_from_params()
+        return int(self.accel_personality)
 
-  def cycle_accel_personality(self) -> int:
-    """Cycle through AccelPersonality: eco -> normal -> sport -> eco"""
-    personalities = [AccelPersonality.eco, AccelPersonality.normal, AccelPersonality.sport]
-    current_idx = personalities.index(self.accel_personality)
-    next_personality = personalities[(current_idx + 1) % len(personalities)]
-    self.set_accel_personality(next_personality)
-    return int(next_personality)
+    def set_long_personality(self, personality: int) -> bool:
+        self.long_personality = personality
+        self.params.put(self.param_keys['long_personality'], str(personality))
+        return True
 
-  def get_accel_personality(self) -> int:
-    """Get current AccelPersonality"""
-    self._update_from_params()
-    return int(self.accel_personality)
+    def cycle_long_personality(self) -> int:
+        personalities = [LongPersonality.relaxed, LongPersonality.standard, LongPersonality.aggressive]
+        current_idx = personalities.index(self.long_personality)
+        next_personality = personalities[(current_idx + 1) % len(personalities)]
+        self.set_long_personality(next_personality)
+        return int(next_personality)
 
-  # LongPersonality Management (for braking and following distance)
-  def set_long_personality(self, personality: int) -> bool:
-    """Set LongPersonality (relaxed=0, standard=1, aggressive=2)"""
-    if personality in [LongPersonality.relaxed, LongPersonality.standard, LongPersonality.aggressive]:
-      self.long_personality = personality
-      self.params.put(self.param_keys['long_personality'], str(personality))
-      return True
-    return False
+    def get_long_personality(self) -> int:
+        self._update_from_params()
+        return int(self.long_personality)
 
-  def cycle_long_personality(self) -> int:
-    """Cycle through LongPersonality: relaxed -> standard -> aggressive -> relaxed"""
-    personalities = [LongPersonality.relaxed, LongPersonality.standard, LongPersonality.aggressive]
-    current_idx = personalities.index(self.long_personality)
-    next_personality = personalities[(current_idx + 1) % len(personalities)]
-    self.set_long_personality(next_personality)
-    return int(next_personality)
+    def toggle_personality(self): return self._toggle_flag('enabled')
+    def toggle_accel_personality(self): return self._toggle_flag('accel_enabled')
+    def toggle_follow_distance_personality(self): return self._toggle_flag('follow_enabled')
 
-  def get_long_personality(self) -> int:
-    """Get current LongPersonality"""
-    self._update_from_params()
-    return int(self.long_personality)
+    def _toggle_flag(self, key):
+        current = self._get_toggle_state(key)
+        self._set_toggle_state(key, not current)
+        return not current
 
-  # Toggle Functions
-  def toggle_personality(self): return self._toggle_flag('enabled')
-  def toggle_accel_personality(self): return self._toggle_flag('accel_enabled')
-  def toggle_follow_distance_personality(self): return self._toggle_flag('follow_enabled')
+    def set_personality_enabled(self, enabled: bool): self._set_toggle_state('enabled', enabled)
+    def is_accel_enabled(self) -> bool: return self._get_toggle_state('enabled') and self._get_toggle_state('accel_enabled')
+    def is_follow_enabled(self) -> bool: return self._get_toggle_state('enabled') and self._get_toggle_state('follow_enabled')
+    def is_enabled(self) -> bool: return self._get_toggle_state('enabled') and (self._get_toggle_state('accel_enabled') or self._get_toggle_state('follow_enabled'))
 
-  def _toggle_flag(self, key):
-    current = self._get_toggle_state(key)
-    self._set_toggle_state(key, not current)
-    return not current
+    def get_accel_limits(self, v_ego: float) -> tuple[float, float]:
+        """Get acceleration limits based on current personalities."""
+        self._update_from_params()
+        max_a = np.interp(v_ego, MAX_ACCEL_BREAKPOINTS, MAX_ACCEL_PROFILES[self.accel_personality])
+        min_a = np.interp(v_ego, MIN_ACCEL_BREAKPOINTS, MIN_ACCEL_PROFILES[self.long_personality])
+        return float(min_a), float(max_a)
 
-  def set_personality_enabled(self, enabled: bool): self._set_toggle_state('enabled', enabled)
+    def get_follow_distance_multiplier(self, v_ego: float) -> float:
+        """Get dynamic following distance based on speed and personality"""
+        self._update_from_params()
+        return get_dynamic_personality(v_ego, self.long_personality)
 
-  # Feature-specific enable checks
-  def is_accel_enabled(self) -> bool:
-    self._update_from_params()
-    return self._get_toggle_state('enabled') and self._get_toggle_state('accel_enabled')
+    def get_min_accel(self, v_ego: float) -> float:
+        return self.get_accel_limits(v_ego)[0]
 
-  def is_follow_enabled(self) -> bool:
-    self._update_from_params()
-    return self._get_toggle_state('enabled') and self._get_toggle_state('follow_enabled')
+    def get_max_accel(self, v_ego: float) -> float:
+        return self.get_accel_limits(v_ego)[1]
 
-  def is_enabled(self) -> bool:
-    self._update_from_params()
-    return (self._get_toggle_state('enabled') and
-            (self._get_toggle_state('accel_enabled') or self._get_toggle_state('follow_enabled')))
+    def reset(self):
+        self.accel_personality = AccelPersonality.normal
+        self.long_personality = LongPersonality.standard
+        self.frame = 0
 
-  def get_accel_limits(self, v_ego: float) -> tuple[float, float] | None:
-    """
-    Get acceleration limits based on current personalities.
-    - Max acceleration from AccelPersonality (eco/normal/sport)
-    - Min acceleration (braking) from LongPersonality (relaxed/standard/aggressive)
-    Returns None if controller is disabled.
-    """
-    self._update_from_params()
-    if not self.is_accel_enabled():
-      return None
-
-    try:
-      # Max acceleration from AccelPersonality
-      max_a = np.interp(v_ego, MAX_ACCEL_BREAKPOINTS, MAX_ACCEL_PROFILES[self.accel_personality])
-
-      # Min acceleration (braking) from LongPersonality
-      min_a = np.interp(v_ego, MIN_ACCEL_BREAKPOINTS, MIN_ACCEL_PROFILES[self.long_personality])
-
-      return float(min_a), float(max_a)
-    except (KeyError, IndexError):
-      return None
-
-  def get_follow_distance_multiplier(self, v_ego: float) -> float | None:
-    """Get dynamic following distance based on speed and personality"""
-    self._update_from_params()
-    if not self.is_follow_enabled():
-      return None
-
-    try:
-      return get_dynamic_personality(v_ego, self.long_personality)
-    except (KeyError, IndexError):
-      return None
-
-
-
-  def get_min_accel(self, v_ego: float) -> float | None:
-    """Get minimum acceleration (braking) from distance mode"""
-    limits = self.get_accel_limits(v_ego)
-    return limits[0] if limits else None
-
-  def get_max_accel(self, v_ego: float) -> float | None:
-    """Get maximum acceleration from drive mode"""
-    limits = self.get_accel_limits(v_ego)
-    return limits[1] if limits else None
-
-  def reset(self):
-    """Reset to default modes"""
-    self.accel_personality = AccelPersonality.normal
-    self.long_personality = LongPersonality.standard
-    self.frame = 0
-
-  def update(self):
-    """Update frame counter"""
-    self.frame += 1
+    def update(self):
+        self.frame += 1

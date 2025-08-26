@@ -336,28 +336,24 @@ class LongitudinalMpc:
     # Get following distance
     if self.vibe_controller.is_follow_enabled():
       t_follow = self.vibe_controller.get_follow_distance_multiplier(v_ego)
-      if t_follow is None:
-        # Fallback to stock behavior when vibe controller can't provide a value
-        t_follow = get_T_FOLLOW(personality)
+      print(f"DEBUG: follow_enabled=True, t_follow={t_follow:.3f}, v_ego={v_ego:.1f}")
     else:
+      # Only fall back when vibe follow is disabled
       t_follow = get_T_FOLLOW(personality)
-    print(f"DEBUG: vibe_follow_enabled={self.vibe_controller.is_follow_enabled()}, t_follow={t_follow:.3f}, v_ego={v_ego:.1f}")
+      print(f"DEBUG: follow_enabled=False, stock t_follow={t_follow:.3f}, v_ego={v_ego:.1f}")
 
+      #print(f"DEBUG: follow_enabled={self.vibe_controller.is_follow_enabled()}, "f"t_follow={t_follow:.3f}, v_ego={v_ego:.1f}")
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     # Get acceleration limits
     if self.vibe_controller.is_accel_enabled():
       accel_limits = self.vibe_controller.get_accel_limits(v_ego)
-      if accel_limits is not None:
-        min_accel = accel_limits[0]
-        print(f"DEBUG: vibe_accel_enabled=True, min_accel={min_accel:.3f}")
-      else:
-        min_accel = CRUISE_MIN_ACCEL
-        print(f"DEBUG: vibe_accel_enabled=True but accel_limits=None, using default={min_accel}")
+      min_accel = accel_limits[0]
+      print(f"DEBUG: accel_enabled=True, min_accel={min_accel:.3f}")
     else:
       min_accel = CRUISE_MIN_ACCEL
-      print(f"DEBUG: vibe_accel_enabled=False, using default={min_accel}")
-
+      print(f"DEBUG: accel_enabled=False, using stock min_accel={min_accel}")
+    
     a_cruise_min = min_accel
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
