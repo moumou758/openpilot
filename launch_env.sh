@@ -6,9 +6,10 @@ export NUMEXPR_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export VECLIB_MAXIMUM_THREADS=1
 
-export ATHENA_HOST='ws://op.caminfo.cn:7776'
-export API_HOST='http://op.caminfo.cn:7777'
-export MAPBOX_TOKEN='sk.eyJ1IjoibWF3ZWl5dXdlaXdlaSIsImEiOiJjbG15NHN1dDMwdWc5MmxwaDdkZ3Z5dHNyIn0.pk06qTKkAZyBC1Z37v8i0A'
+export API_HOST='https://api.konik.ai'
+export ATHENA_HOST='wss://athena.konik.ai'
+#export MAPS_HOST=https://api.konik.ai/maps
+export MAPBOX_TOKEN='pk.eyJ1IjoibXJvbmVjYyIsImEiOiJjbHhqbzlkbTYxNXUwMmtzZjdoMGtrZnVvIn0.SC7GNLtMFUGDgC2bAZcKzg'
 
 if [ -z "$AGNOS_VERSION" ]; then
   export AGNOS_VERSION="12.6"
