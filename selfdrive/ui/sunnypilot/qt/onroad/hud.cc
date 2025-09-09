@@ -59,6 +59,14 @@ void HudRendererSP::updateState(const UIState &s) {
 
   road_name = QString::fromStdString(live_map_data.getRoadName());
 
+  // Vision Turn Speed Control
+  const auto vtsc = lp_sp.getVisionTurnSpeedControl();
+  vtsc_state = static_cast<int>(vtsc.getState());
+  vtsc_velocity = vtsc.getVelocity() * (is_metric ? MS_TO_KPH : MS_TO_MPH);
+  vtsc_current_lateral_accel = vtsc.getCurrentLateralAccel();
+  vtsc_max_predicted_lateral_accel = vtsc.getMaxPredictedLateralAccel();
+  show_vtsc = vtsc_state != 0; // Show when not disabled
+
   // when going above speed limit and offset it will flash
   float current_limit = slc_speed_limit;
   if (current_limit > 0) {
@@ -101,6 +109,9 @@ void HudRendererSP::draw(QPainter &p, const QRect &surface_rect) {
     drawRoadName(p, surface_rect);
   }
 
+  if (show_vtsc) {
+    drawVisionTurnControl(p, surface_rect);
+  }
   drawCurrentSpeed(p, surface_rect);
 
   p.restore();
@@ -448,4 +459,79 @@ void HudRendererSP::drawRoadName(QPainter &p, const QRect &surface_rect) {
   // Truncate if still too long
   QString truncated = fm.elidedText(road_name, Qt::ElideRight, road_rect.width() - 20);
   p.drawText(road_rect, Qt::AlignCenter, truncated);
+}
+
+void HudRendererSP::drawVisionTurnControl(QPainter &p, const QRect &surface_rect) {
+  // Position below the current speed display
+  const int vtsc_width = 280;
+  const int vtsc_height = 120;
+  const int vtsc_x = (surface_rect.width() - vtsc_width) / 2;
+  const int vtsc_y = 350; // Below speed display
+
+  QRect vtsc_rect(vtsc_x, vtsc_y, vtsc_width, vtsc_height);
+
+  // Determine state colors and text
+  QColor state_color;
+  QString state_text;
+  QColor bg_color = QColor(0, 0, 0, 180);
+
+  switch (vtsc_state) {
+    case 1: // entering
+      state_color = QColor(255, 200, 0, 255); // Orange
+      state_text = tr("TURN AHEAD");
+      bg_color = QColor(40, 30, 0, 200); // Dark orange tint
+      break;
+    case 2: // turning
+      state_color = QColor(255, 100, 100, 255); // Light red
+      state_text = tr("TURNING");
+      bg_color = QColor(40, 20, 20, 200); // Dark red tint
+      break;
+    case 3: // leaving
+      state_color = QColor(100, 255, 100, 255); // Light green
+      state_text = tr("TURN EXIT");
+      bg_color = QColor(20, 40, 20, 200); // Dark green tint
+      break;
+    default:
+      return; // Don't draw if disabled
+  }
+
+  // Draw background with subtle border
+  p.setPen(QPen(state_color, 2));
+  p.setBrush(bg_color);
+  p.drawRoundedRect(vtsc_rect, 16, 16);
+
+  // Draw state text
+  p.setFont(InterFont(32, QFont::Bold));
+  p.setPen(state_color);
+  p.drawText(vtsc_rect.adjusted(0, 10, 0, 0), Qt::AlignTop | Qt::AlignHCenter, state_text);
+
+  // Draw target velocity if significantly different from current speed
+  if (vtsc_velocity > 0 && std::abs(vtsc_velocity - speed) > 2.0) {
+    QString velocity_text = QString::number(std::nearbyint(vtsc_velocity)) + (is_metric ? " km/h" : " mph");
+    p.setFont(InterFont(24, QFont::DemiBold));
+    p.setPen(QColor(255, 255, 255, 200));
+    p.drawText(vtsc_rect.adjusted(0, 50, 0, 0), Qt::AlignTop | Qt::AlignHCenter, velocity_text);
+  }
+
+  // Draw lateral acceleration indicator (simplified)
+  if (vtsc_max_predicted_lateral_accel > 0.5) { // Only show for significant turns
+    QRect accel_rect = vtsc_rect.adjusted(10, vtsc_rect.height() - 25, -10, -10);
+
+    // Background bar
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor(60, 60, 60, 150));
+    p.drawRoundedRect(accel_rect, 4, 4);
+
+    // Current acceleration indicator
+    float accel_ratio = std::min(1.0f, std::abs(vtsc_current_lateral_accel) / 4.0f); // Scale to 4 m/s²
+    int current_width = static_cast<int>(accel_rect.width() * accel_ratio);
+    if (current_width > 0) {
+      QRect current_rect = accel_rect;
+      current_rect.setWidth(current_width);
+      QColor accel_color = interpColor(accel_ratio, {0.0f, 0.7f, 1.0f},
+                                      {QColor(100, 255, 100), QColor(255, 255, 100), QColor(255, 100, 100)});
+      p.setBrush(accel_color);
+      p.drawRoundedRect(current_rect, 4, 4);
+    }
+  }
 }
