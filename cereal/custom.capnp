@@ -126,6 +126,7 @@ struct LongitudinalPlanSP @0xf35cc4560bbf6ec2 {
 
   events @1 :List(OnroadEventSP.Event);
   slc @2 :SpeedLimitControl;
+  smartCruiseControl @4 :SmartCruiseControl;
 
   struct DynamicExperimentalControl {
     state @0 :DynamicExperimentalControlState;
@@ -167,6 +168,26 @@ struct LongitudinalPlanSP @0xf35cc4560bbf6ec2 {
     none @0;
     car @1;
     map @2;
+  }
+
+  struct SmartCruiseControl {
+    vision @0 :Vision;
+
+    struct Vision {
+      state @0 :VisionState;
+      vTarget @1 :Float32;
+      aTarget @2 :Float32;
+      currentLateralAccel @3 :Float32;
+      maxPredictedLateralAccel @4 :Float32;
+    }
+
+    enum VisionState {
+      disabled @0; # System disabled or inactive.
+      enabled @1; # No predicted substantial turn on vision range.
+      entering @2; # A substantial turn is predicted ahead, adapting speed to turn comfort levels.
+      turning @3; # Actively turning. Managing acceleration to provide a roll on turn feeling.
+      leaving @4; # Road ahead straightens. Start to allow positive acceleration.
+    }
   }
 }
 
