@@ -15,27 +15,27 @@ AccelPersonality = custom.LongitudinalPlanSP.AccelerationPersonality
 
 # Acceleration Profiles mapped to AccelPersonality (eco/normal/sport)
 MAX_ACCEL_PROFILES = {
-    AccelPersonality.eco:       [2.00, 2.0,  1.80, 1.23, .523, .288, .13, .088],  # eco
-    AccelPersonality.normal:    [2.00, 2.0,  1.95, 1.40, .600, .299, .17, .12],   # normal
-    AccelPersonality.sport:     [2.00, 2.0,  1.99, 1.65, .800, .333, .24, .2],    # sport
+    AccelPersonality.eco:       [2.0,  2.0,  1.80, 1.23, .523, .288, .13, .088],  # eco
+    AccelPersonality.normal:    [2.0,  2.0,  1.95, 1.40, .600, .299, .17, .12],   # normal
+    AccelPersonality.sport:     [2.0,  2.0,  1.99, 1.65, .800, .333, .24, .2],    # sport
 }
 MAX_ACCEL_BREAKPOINTS =         [0.,   4.,   6.,   9.,   16.,  25.,  30., 55.]
 
 # Braking profiles mapped to LongPersonality (relaxed/standard/aggressive)
 MIN_ACCEL_PROFILES = {
-    LongPersonality.relaxed:    [-.0060, -1.1, -1.1, -1.1],  # gentler braking
-    LongPersonality.standard:   [-.0065, -1.2, -1.2, -1.2],  # normal braking
-    LongPersonality.aggressive: [-.0070, -1.2, -1.2, -1.2],  # more aggressive braking
+    LongPersonality.relaxed:    [-.001, -.001, -.4, -1.1],  # gentler braking
+    LongPersonality.standard:   [-.001, -.001, -.5, -1.2],  # normal braking
+    LongPersonality.aggressive: [-.002, -.002, -.6, -1.2],  # more aggressive braking
 }
-MIN_ACCEL_BREAKPOINTS =         [0.,   8.,  20.,  50.]
+MIN_ACCEL_BREAKPOINTS =         [0.,   1.,    3.,   50.]
 
 # Follow distance profiles mapped to LongPersonality (relaxed/standard/aggressive)
 FOLLOW_PROFILES = {
-    LongPersonality.relaxed:    [1.75, 1.75, 1.60, 1.80, 2.10],  # more spread out
-    LongPersonality.standard:   [1.45, 1.45, 1.30, 1.50, 1.70],  # balanced
-    LongPersonality.aggressive: [1.25, 1.25, 1.10, 1.25, 1.45],  # tighter
+    LongPersonality.relaxed:    [1.75, 1.77, 1.75, 1.65, 1.80, 1.80],  # more spread out
+    LongPersonality.standard:   [1.45, 1.48, 1.45, 1.40, 1.50, 1.50],  # balanced
+    LongPersonality.aggressive: [1.25, 1.28, 1.25, 1.25, 1.25, 1.30],  # tighter
 }
-FOLLOW_BREAKPOINTS = [0., 3., 6., 12., 36.]
+FOLLOW_BREAKPOINTS = [0., 2., 3., 6., 12., 36.]
 
 class VibePersonalityController:
     """Controller for acceleration and distance personalities"""
