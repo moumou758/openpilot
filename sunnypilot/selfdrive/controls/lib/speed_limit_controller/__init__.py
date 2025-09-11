@@ -16,5 +16,5 @@ LIMIT_MAX_MAP_DATA_AGE = 10.  # s Maximum time to hold to map data, then conside
 
 # Speed Limit Control Auto mode constants
 REQUIRED_INITIAL_MAX_SET_SPEED = 35.7632  # m/s 80 MPH  # TODO-SP: customizable with params
-CRUISE_SPEED_TOLERANCE = 0.44704  # m/s ±1 MPH tolerance  # TODO-SP: metric vs imperial
+CRUISE_SPEED_TOLERANCE = 0.89408  # m/s ±1 MPH tolerance  # TODO-SP: metric vs imperial
 FALLBACK_CRUISE_SPEED = 255.0  # m/s fallback when no speed limit available
