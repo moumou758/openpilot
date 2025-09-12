@@ -17,7 +17,6 @@ from openpilot.sunnypilot.selfdrive.controls.lib.dec.dec import DynamicExperimen
 from openpilot.sunnypilot.selfdrive.controls.lib.speed_limit_controller.speed_limit_controller import SpeedLimitController
 from openpilot.sunnypilot.selfdrive.controls.lib.speed_limit_controller.speed_limit_resolver import SpeedLimitResolver
 from openpilot.sunnypilot.selfdrive.selfdrived.events import EventsSP
-from openpilot.sunnypilot.selfdrive.controls.lib.smart_cruise_control.vision_controller import SmartCruiseControlVision
 from openpilot.sunnypilot.models.helpers import get_active_bundle
 
 from openpilot.sunnypilot.selfdrive.controls.lib.vibe_personality.vibe_personality import VibePersonalityController
@@ -32,7 +31,6 @@ class LongitudinalPlannerSP:
 
     self.dec = DynamicExperimentalController(CP, mpc)
     self.vibe_controller = VibePersonalityController()
-    self.scc_v = SmartCruiseControlVision(CP)
     self.generation = int(model_bundle.generation) if (model_bundle := get_active_bundle()) else None
     self.slc = SpeedLimitController(CP)
     self.transition_init()
@@ -48,27 +46,17 @@ class LongitudinalPlannerSP:
 
     return self.dec.mode()
 
-  def update_targets(self, sm: messaging.SubMaster, v_ego: float, a_ego: float, v_cruise: float) -> tuple[float, float, str]:
-    # Update SCC
-    self.scc_v.update(sm, sm['carControl'].longActive, v_ego, a_ego, v_cruise)
-
-    # update SLA
+  def update_v_cruise(self, sm: messaging.SubMaster, v_ego: float, a_ego: float, v_cruise: float) -> float:
     self.events_sp.clear()
+
+    # Speed Limit Control
     self.resolver.update(v_ego, sm)
     v_cruise_slc = self.slc.update(sm['carControl'].longActive, v_ego, a_ego, sm['carState'].vCruiseCluster,
                                    self.resolver.speed_limit, self.resolver.distance, self.resolver.source, self.events_sp)
 
     v_cruise_final = min(v_cruise, v_cruise_slc)
 
-    targets = {
-      'cruise': (v_cruise_final, a_ego),
-      'scc_v': (self.scc_v.output_v_target, self.scc_v.output_a_target),
-    }
-
-    src = min(targets, key=lambda k: targets[k][0])
-    v_target, a_target = targets[src]
-
-    return v_target, a_target, src
+    return v_cruise_final
 
   def transition_init(self) -> None:
     self._transition_counter = 0
@@ -123,14 +111,5 @@ class LongitudinalPlannerSP:
     slc.speedLimitOffset = float(self.slc.speed_limit_offset)
     slc.distToSpeedLimit = float(self.resolver.distance)
     slc.source = self.resolver.source
-    # Smart Cruise Control
-    smartCruiseControl = longitudinalPlanSP.smartCruiseControl
-    # Vision Turn Speed Control
-    sccVision = smartCruiseControl.vision
-    sccVision.state = self.scc_v.state
-    sccVision.vTarget = float(self.scc_v.output_v_target)
-    sccVision.aTarget = float(self.scc_v.output_a_target)
-    sccVision.currentLateralAccel = float(self.scc_v.current_lat_acc)
-    sccVision.maxPredictedLateralAccel = float(self.scc_v.max_pred_lat_acc)
 
     pm.send('longitudinalPlanSP', plan_sp_send)
