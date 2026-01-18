@@ -4,6 +4,10 @@ import os
 import time
 import usb1
 import threading
+import tempfile
+import shutil
+import subprocess
+import bz2
 
 os.environ['FILEREADER_CACHE'] = '1'
 
@@ -44,10 +48,10 @@ def send_thread(j: PandaJungle, flock):
       i = (rk.frame*DT_CTRL) % (IGN_ON + IGN_OFF) < IGN_ON
       j.set_ignition(i)
 
-    snd = CAN_MSGS[rk.frame % len(CAN_MSGS)]
-    snd = list(filter(lambda x: x[-1] <= 2, snd))
+    send = CAN_MSGS[rk.frame % len(CAN_MSGS)]
+    send = list(filter(lambda x: x[-1] <= 2, send))
     try:
-      j.can_send_many(snd)
+      j.can_send_many(send)
     except usb1.USBErrorTimeout:
       # timeout is fine, just means the CAN TX buffer is full
       pass
@@ -85,11 +89,64 @@ def process(lr):
 
 def load_route(route_or_segment_name):
   print("Loading log...")
-  sr = LogReader(route_or_segment_name)
+  # If a directory is passed, pick the most likely log file inside
+  path = route_or_segment_name
+  tmp_uncompressed = None
+  if os.path.isdir(path):
+    # Prefer rlog then qlog, prefer .zst/.bz2 variants
+    candidates = ["rlog.zst", "rlog.bz2", "rlog", "qlog.zst", "qlog.bz2", "qlog"]
+    found = None
+    for c in candidates:
+      p = os.path.join(path, c)
+      if os.path.exists(p):
+        found = p
+        break
+    if found is None:
+      raise FileNotFoundError(f"No rlog/qlog found in directory: {path}")
+    path = found
+
+  # If file is compressed (.zst/.bz2), decompress to a temp file and point LogReader to it
+  if path.endswith('.zst'):
+    # try using system zstd if available for streaming performance
+    if shutil.which('zstd'):
+      tf = tempfile.NamedTemporaryFile(delete=False)
+      tf.close()
+      with open(tf.name, 'wb') as out:
+        subprocess.run(['zstd', '-d', '-c', path], check=True, stdout=out)
+      tmp_uncompressed = tf.name
+      path = tmp_uncompressed
+    else:
+      # fallback to python zstandard streaming
+      try:
+        import zstandard as zstd
+        dctx = zstd.ZstdDecompressor()
+        tf = tempfile.NamedTemporaryFile(delete=False)
+        with open(path, 'rb') as ifp, open(tf.name, 'wb') as ofp, dctx.stream_reader(ifp) as reader:
+          while True:
+            chunk = reader.read(65536)
+            if not chunk:
+              break
+            ofp.write(chunk)
+        tmp_uncompressed = tf.name
+        path = tmp_uncompressed
+      except Exception:
+        raise
+  elif path.endswith('.bz2'):
+    tf = tempfile.NamedTemporaryFile(delete=False)
+    with bz2.open(path, 'rb') as ifp, open(tf.name, 'wb') as ofp:
+      shutil.copyfileobj(ifp, ofp)
+    tmp_uncompressed = tf.name
+    path = tmp_uncompressed
+
+  print(f"Using log file: {path}")
+  # Some logs may contain non-union events that raise when calling which();
+  # ask LogReader to only yield union types to avoid capnp.which() errors
+  sr = LogReader(path, only_union_types=True)
   CP = sr.first("carParams")
   print(f"carFingerprint (for hardcoding fingerprint): '{CP.carFingerprint}'")
   CAN_MSGS = sr.run_across_segments(24, process)
   print("Finished loading...")
+  # Note: temporary decompressed file (if any) is left on disk for inspection
   return CAN_MSGS
 
 if __name__ == "__main__":
