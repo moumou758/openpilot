@@ -81,9 +81,41 @@ def connect():
 
 def load_route(route_or_segment_name):
   print("Loading log...")
-  lr = LogReader(route_or_segment_name)
+
+  # If a directory is passed, look for common log files inside (rlog, qlog, compressed variants)
+  if os.path.isdir(route_or_segment_name):
+    candidates = [
+      "rlog",
+      "rlog.bz2",
+      "rlog.zst",
+      "qlog",
+      "qlog.bz2",
+      "qlog.zst",
+    ]
+    found = None
+    for c in candidates:
+      p = os.path.join(route_or_segment_name, c)
+      if os.path.exists(p):
+        found = p
+        break
+
+    if found is None:
+      # try any file that starts with rlog or qlog
+      for fn in os.listdir(route_or_segment_name):
+        if fn.startswith("rlog") or fn.startswith("qlog"):
+          found = os.path.join(route_or_segment_name, fn)
+          break
+
+    if found is None:
+      raise FileNotFoundError(f"No rlog/qlog found in directory: {route_or_segment_name}")
+
+    lr = LogReader(found)
+  else:
+    lr = LogReader(route_or_segment_name)
+
   CP = lr.first("carParams")
-  print(f"carFingerprint: '{CP.carFingerprint}'")
+  if CP is not None:
+    print(f"carFingerprint: '{CP.carFingerprint}'")
   mbytes = [m.as_builder().to_bytes() for m in lr if m.which() == 'can']
   return [m[1] for m in can_capnp_to_list(mbytes)]
 

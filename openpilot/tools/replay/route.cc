@@ -67,6 +67,13 @@ bool Route::loadSegments() {
   if (!auto_source_) {
     bool ret = data_dir_.empty() ? loadFromServer() : loadFromLocal();
     if (ret) {
+      // If driver camera is missing, fallback to qcamera when available
+      for (auto &entry : segments_) {
+        auto &files = entry.second;
+        if (files.driver_cam.empty() && !files.qcamera.empty()) {
+          files.driver_cam = files.qcamera;
+        }
+      }
       // Trim segments
       if (route_.begin_segment > 0) {
         segments_.erase(segments_.begin(), segments_.lower_bound(route_.begin_segment));

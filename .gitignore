@@ -69,9 +69,9 @@ coverage.xml
 htmlcov
 
 # openpilot log files
-*.bz2
-*.zst
-*.rlog
+# *.bz2
+# *.zst
+# *.rlog
 
 build/
 
