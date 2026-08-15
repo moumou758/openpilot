@@ -455,10 +455,10 @@ class SelfdriveD(CruiseHelper):
       if not self.sm['deviceMotion'].posenetOK:
         self.events.add(EventName.posenetInvalid)
       if not self.sm['deviceMotion'].inputsOK:
-        self.events.add(EventName.locationdTemporaryError)
+        pass#self.events.add(EventName.locationdTemporaryError)
       if (not self.sm['vehicleParameters'].valid and cal_status == log.ExtrinsicsCalibration.Status.calibrated and
           not TESTING_CLOSET and (not SIMULATION or REPLAY)):
-        self.events.add(EventName.paramsdTemporaryError)
+        pass#self.events.add(EventName.paramsdTemporaryError)
 
     # conservative HW alert. if the data or frequency are off, locationd will throw an error
     if any((self.sm.frame - self.sm.recv_frame[s])*DT_CTRL > 10. for s in self.sensor_packets):
