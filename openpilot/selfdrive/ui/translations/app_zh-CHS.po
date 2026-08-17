@@ -1941,6 +1941,15 @@ msgstr "请重启设备并重试。"
 msgid "Policy Model"
 msgstr "决策模型"
 
+msgid "Off-Policy Model"
+msgstr "离策略模型"
+
+msgid "On-Policy Model"
+msgstr "在策略模型"
+
+msgid "Chunked Model"
+msgstr "分块模型"
+
 msgid "Post-Blinker Delay"
 msgstr "转向延时"
 
