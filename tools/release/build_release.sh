@@ -32,12 +32,7 @@ if ! command -v scons &>/dev/null && [ -f /usr/local/venv/bin/scons ]; then
   export PATH="/usr/local/venv/bin:$PATH"
 fi
 
-if [ -z "$RELEASE_BRANCH" ]; then
-  echo "RELEASE_BRANCH is not set"
-  exit 1
-fi
-
-BUILD_BRANCH=release-mici-staging
+BUILD_BRANCH="release$(date +%y%m%d)-tici"
 
 
 # set git identity
@@ -155,11 +150,7 @@ fi
 #tools/test_runner.py openpilot/selfdrive/car/tests/test_car_interfaces.py
 
 echo "[-] pushing release T=$SECONDS"
-REFS=()
-for branch in ${RELEASE_BRANCH//,/ }; do
-  REFS+=("$BUILD_BRANCH:$branch")
-done
 # uploading the larger pack is faster than spending CPU to optimize it
-git -c pack.window=0 -c pack.depth=0 -c pack.compression=0 push -f origin "${REFS[@]}"
+git -c pack.window=0 -c pack.depth=0 -c pack.compression=0 push -f origin "$BUILD_BRANCH:$BUILD_BRANCH"
 
 echo "[-] done T=$SECONDS"
