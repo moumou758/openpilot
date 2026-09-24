@@ -2,11 +2,17 @@
 import subprocess
 import time
 from opendbc.car.structs import car
+from openpilot.cereal import custom
 import openpilot.cereal.messaging as messaging
 from openpilot.common.realtime import Ratekeeper
 import threading
 
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
+AudibleAlertSP = custom.SelfdriveStateSP.AudibleAlert
+BEEP_IGNORED_ALERTS = {
+  int(AudibleAlertSP.promptSingleLow),
+  int(AudibleAlertSP.promptSingleHigh),
+}
 
 class Beepd:
   def __init__(self):
@@ -72,6 +78,8 @@ class Beepd:
     if new_alert != self.current_alert:
       self.current_alert = new_alert
       print(f"[BEEP] New alert: {new_alert}")
+      if new_alert in BEEP_IGNORED_ALERTS:
+        return
       #if new_alert == AudibleAlert.engage:
         #self.dispatch_beep(self.engage)
       #elif new_alert == AudibleAlert.disengage:
