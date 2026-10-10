@@ -276,7 +276,7 @@ EVENTS_SP: dict[int, dict[str, Alert | AlertCallbackType]] = {
   EventNameSP.bigModelAvailable: {
     ET.PERMANENT: Alert(
       "大模型就绪",
-      "Re-engage to switch",
+      "重新介入以切换",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.promptRepeat, 1.),
   },
@@ -290,8 +290,8 @@ EVENTS_SP: dict[int, dict[str, Alert | AlertCallbackType]] = {
   # soft disable. Raised for 5 s (accelerator_events); a disengage ends it
   EventNameSP.bigModelLinkLost: {
     ET.WARNING: Alert(
-      "Big Model Lost",
-      "Using small model",
+      "大模型已丢失",
+      "正在使用小模型",
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.MID, VisualAlert.steerRequired, AudibleAlert.warningSoft, .2),
   },
