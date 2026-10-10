@@ -1312,11 +1312,36 @@ msgstr "小模型"
 msgid "Big Model"
 msgstr "大模型"
 
+msgid ""
+"Run big models over a connected device running Jetlink. Turns off ADB."
+msgstr ""
+"通过 Jetlink 在连接的设备上运行大模型。将关闭 ADB功能。"
+
+msgid ""
+"Nothing on the USB port."
+msgstr ""
+"USB 端口上没有任何设备。"
+
+msgid ""
+"A device is on the USB port."
+msgstr ""
+"检测到 USB 设备。"
+
 msgid "small"
 msgstr "小"
 
 msgid "big"
 msgstr "大"
+
+msgid ""
+"{} will drive when Jetlink is ready."
+msgstr ""
+"{} 将在 Jetlink 准备就绪后启用。"
+
+msgid ""
+"{} will drive when the chestnut is ready."
+msgstr ""
+"{} 将在 chestnut 准备就绪后启用。"
 
 msgid "verifying"
 msgstr "正在校验"
