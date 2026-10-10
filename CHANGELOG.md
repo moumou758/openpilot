@@ -1,4 +1,4 @@
-sunnypilot Version 2026.002.000 (2026-10-07)
+sunnypilot Version 2026.002.000 (2026-10-10)
 ========================
 * 修改说明：
   * 此版本仅限C3XL使用
@@ -6,6 +6,7 @@ sunnypilot Version 2026.002.000 (2026-10-07)
   * 同步onemiless的更新，使用Tesla的车机限速值自动调整限速-测试
   --需将“速度限制”设置中的“辅助调节”功能打开，使用时不要手动调节限速值
   * 同步onemiless的更新，使用Tesla的红绿灯数据-测试
+  * 增加jetlink0.8.5，抄了bfayers的代码
   * sp master 同步至20261007#2036更新
   * 抄了DP代码进行汉化，onroad界面提醒可能局部还会有“ ? ”
   * 在设定选项中增加了C4界面开关-From AmyJeanes
