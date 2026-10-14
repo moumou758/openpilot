@@ -9,7 +9,6 @@ sunnypilot Version 2026.002.000 (2026-10-10)
   * 增加jetlink0.8.5，抄了bfayers的代码
   * sp master 同步至20261007#2036更新
   * 抄了DP代码进行汉化，onroad界面提醒可能局部还会有“ ? ”
-  * 在设定选项中增加了C4界面开关-From AmyJeanes
   * 根据我的习惯调整了底部显示数据
   * 修改onroad右上角方向盘跟转，修改eGPU未连接显示图标
 
