@@ -96,11 +96,11 @@ class ChestnutStatus:
     set_alert("Offroad_ChestnutOverheated", self.overheated)
     set_alert("Offroad_ChestnutUsbSlow", slow_usb, f"{devices[0]['speedMbps']} Mbps" if slow_usb else None)
     if self.power_lost:
-      pcie_alert = ("Chestnut power restored. Restart the car to retry." if self.power_restored else
-                    "Chestnut power disconnected. Check the 12V connection, then restart the car." if self.power_unavailable else
-                    "Chestnut power lost. Check the 12V connection, then restart the car.")
+      pcie_alert = ("eGPU 电源已恢复，请重启车辆后重试。" if self.power_restored else
+                    "eGPU 电源已断开，请检查 12V 连接后重启车辆。" if self.power_unavailable else
+                    "eGPU 电源丢失，请检查 12V 连接后重启车辆。")
     else:
-      pcie_alert = "Chestnut GPU unavailable. Check the GPU is securely seated, then restart the car."
+      pcie_alert = "eGPU 不可用，请检查 GPU 是否安装牢固，然后重启车辆。"
     set_alert("Offroad_ChestnutPcieUnavailable", self.pcie_failed, pcie_alert)
     set_alert("Offroad_ChestnutModelError", self.model_failed and not (missing or self.pcie_failed))
     set_alert("Offroad_ChestnutUpdateFailed", offroad and firmware_failed)
