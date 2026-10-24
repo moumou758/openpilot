@@ -35,11 +35,11 @@ def reproject_fit_progress(sm: messaging.SubMaster, speed: str) -> tuple[str, st
     return None
   fit = sm['reprojectCalibrationSP']
   if fit.status in (Status.building, Status.ready):  # until reprojectd has swapped it in
-    return "Aligning cameras: 100%", "Finishing up"
-  action = {'cameras': "Waiting for cameras", 'pair': "Waiting for camera frames", 'speed': f"Drive above {speed}",
-            'straight': "Drive straight", 'features': "Road visibility low",
-            'model': "Waiting for model to load"}.get(str(fit.why), f"Stay above {speed}")
-  return f"Aligning cameras: {fit.pct}%", action
+    return "正在对齐摄像头: 100%", "正在完成"
+  action = {'cameras': "正在等待摄像头", 'pair': "正在等待相机画面", 'speed': f"请保持车速高于 {speed}",
+            'straight': "请保持直行", 'features': "道路可见度较低",
+            'model': "正在等待模型加载"}.get(str(fit.why), f"请保持车速高于 {speed}")
+  return f"正在对齐摄像头: {fit.pct}%", action
 
 def speed_limit_adjust_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int, personality) -> Alert:
   speedLimit = sm['longitudinalPlanSP'].speedLimit.resolver.speedLimit
