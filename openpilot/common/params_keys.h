@@ -150,6 +150,7 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
     {"Version", {PERSISTENT, STRING}},
 
     // --- sunnypilot params --- //
+    {"AccelBoostSP", {PERSISTENT | BACKUP, BOOL, "1"}},
 
     // Accelerators: what runs the large model. See sunnypilot/jetlink_adapter/.
     {"AcceleratorProgress", {CLEAR_ON_MANAGER_START, JSON}},
