@@ -1,10 +1,10 @@
-sunnypilot Version 2026.002.000 (2026-11-05)
+sunnypilot Version 2026.002.000 (2026-11-06)
 ========================
 * 修改说明：
   * 此版本仅限C3XL使用
   * 同步Dzid26 dev版本特斯拉方向混控
   * 同步onemiless的更新，使用Tesla的红绿灯数据-测试
-  * sp master 同步至20261105#2091更新
+  * sp master 同步至20261106#2093更新
   * 加入了Jetlink-0.8.12-From bfayers
   * 抄了DP代码进行汉化，onroad界面提醒可能局部还会有“ ? ”
   * 调整onroad底部显示数据
