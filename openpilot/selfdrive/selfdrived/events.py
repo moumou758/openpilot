@@ -235,7 +235,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
 
   EventName.bigModelFailed: {
     ET.SOFT_DISABLE: soft_disable_alert("大模型加载失败"),
-    ET.PERMANENT: NormalPermanentAlert("大模型加载失败 ", "请尝试重启车辆，\n当前已切换至普通模型驾驶", duration=20.),
+    ET.PERMANENT: NormalPermanentAlert("大模型加载失败 ", "请尝试重启车辆，\n当前已切换至小模型驾驶", duration=20.),
   },
 
   EventName.lateralManeuver: {
