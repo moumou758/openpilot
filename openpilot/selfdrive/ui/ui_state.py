@@ -71,6 +71,7 @@ class UIState(UIStateSP):
         "wideRoadCameraState",
         "managerState",
         "selfdriveState",
+        "chestnutState",
         "longitudinalPlan",
         "gpsLocationExternal",
         "gpsLocation",
