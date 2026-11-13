@@ -9,6 +9,8 @@ from dataclasses import dataclass
 
 from openpilot.common.constants import CV
 from openpilot.selfdrive.ui.ui_state import ui_state
+from openpilot.selfdrive.ui.sunnypilot.model_info import default_model_name
+from openpilot.sunnypilot.models.helpers import get_selected_bundle
 from openpilot.system.ui.lib.text_measure import measure_text_cached
 
 
@@ -25,14 +27,16 @@ class UiElement:
   label_width: float = 0.0
   unit_width: float = 0.0
   total_width: float = 0.0
+  value_parts: list[tuple[str, rl.Color]] | None = None
 
   def measure(self, font, font_size: int):
-    self.label_text = f"{self.label} "
+    self.label_text = f"{self.label} " if self.label else ""
     self.val_text = self.value
     self.unit_text = f" {self.unit}" if self.unit else ""
 
     self.label_width = measure_text_cached(font, self.label_text, font_size, 0).x
-    self.val_width = measure_text_cached(font, self.val_text, font_size, 0).x
+    self.val_width = (sum(measure_text_cached(font, text, font_size, 0).x for text, _ in self.value_parts)
+              if self.value_parts is not None else measure_text_cached(font, self.val_text, font_size, 0).x)
     self.unit_width = measure_text_cached(font, self.unit_text, font_size, 0).x if self.unit else 0
 
     self.total_width = self.label_width + self.val_width + self.unit_width
@@ -338,6 +342,40 @@ class CpuTempMaxElement:
       color = rl.Color(0, 255, 0, 200)
 
     return UiElement(value, "CPU温度", self.unit, color)
+
+
+class EgpuElement:
+  @staticmethod
+  def _model_name(source: str) -> str:
+    bundle = get_selected_bundle(ui_state.params, source)
+    return bundle.internalName if bundle else default_model_name(source)
+
+  def update(self, sm, chestnut_state) -> UiElement:
+    state = chestnut_state.value
+    status_labels = {
+      "uncompiled": ("未编译", rl.RED),
+      "ready": ("就绪", rl.Color(255, 188, 0, 200)),
+      "loading": ("加载中", rl.Color(255, 188, 0, 200)),
+      "active": ("运行", rl.Color(0, 255, 0, 200)),
+      "failed": ("异常", rl.RED),
+    }
+    source = "qcom" if state == "disconnected" else "chestnut"
+    model_name = self._model_name(source)
+    name_color = rl.Color(0, 255, 0, 200) if state == "disconnected" else status_labels.get(state, ("未知", rl.WHITE))[1]
+    value_parts = [("● ", rl.WHITE), (model_name, name_color)]
+    if state not in ("disconnected", "active"):
+      status_text, status_color = status_labels.get(state, ("未知", rl.WHITE))
+      value_parts.extend([(" ", rl.WHITE), (status_text, status_color)])
+    if state == "active" and sm.valid["chestnutState"]:
+      telemetry = sm["chestnutState"]
+      value_parts.extend([
+        (f" {telemetry.tempC:.0f}", rl.Color(0, 255, 0, 200)), ("°C ", rl.WHITE),
+        (f"{telemetry.gpuUsagePercent}", rl.Color(0, 255, 0, 200)), ("% ", rl.WHITE),
+        (f"{telemetry.powerDrawW:.0f}", rl.Color(0, 255, 0, 200)), ("W ", rl.WHITE),
+        (f"{telemetry.fanSpeedRpm}", rl.Color(0, 255, 0, 200)), ("rpm", rl.WHITE),
+      ])
+    value = "".join(text for text, _ in value_parts)
+    return UiElement(value, "", "", name_color, value_parts=value_parts)
 
 
 class SteeringTorqueEpsElement:
