@@ -13,7 +13,7 @@ from openpilot.selfdrive.ui.sunnypilot.onroad.developer_ui.elements import (
   DesiredLateralAccelElement, ActualLateralAccelElement, DesiredSteeringAngleElement,
   AEgoElement, LeadSpeedElement, FrictionCoefficientElement, LatAccelFactorElement,
   SteeringTorqueEpsElement, BearingDegElement, AltitudeElement, DesiredSteeringPIDElement,
-  StorageElement, MemoryUsageElement, CpuTempMaxElement
+  StorageElement, MemoryUsageElement, CpuTempMaxElement, EgpuElement
 )
 from openpilot.system.ui.lib.application import gui_app, FontWeight
 from openpilot.system.ui.lib.text_measure import measure_text_cached
@@ -40,6 +40,7 @@ class DeveloperUiRenderer(Widget):
     self._font_semi_bold: rl.Font = gui_app.font(FontWeight.SEMI_BOLD)
     self.dev_ui_mode = DeveloperUiState.OFF
 
+    self.egpu_elem = EgpuElement()
     self.rel_dist_elem = RelDistElement()
     self.rel_speed_elem = RelSpeedElement()
     self.steering_angle_elem = SteeringAngleElement()
@@ -141,7 +142,8 @@ class DeveloperUiRenderer(Widget):
     elements = [
       #self.a_ego_elem.update(sm, ui_state.is_metric),
       #self.lead_speed_elem.update(sm, ui_state.is_metric),
-      self.rel_dist_elem.update(sm, ui_state.is_metric),
+      #self.rel_dist_elem.update(sm, ui_state.is_metric),
+      self.egpu_elem.update(sm, ui_state.chestnut_state),
       self.memory_elem.update(sm, ui_state.is_metric),
       self.storage_elem.update(sm, ui_state.is_metric),
       self.cpu_temp_max_elem.update(sm, ui_state.is_metric),
@@ -193,7 +195,13 @@ class DeveloperUiRenderer(Widget):
     start_x = center_x - element.total_width / 2
 
     rl.draw_text_ex(self._font_bold, element.label_text, rl.Vector2(start_x, y - font_size // 2), font_size, 0, rl.WHITE)
-    rl.draw_text_ex(self._font_bold, element.val_text, rl.Vector2(start_x + element.label_width, y - font_size // 2), font_size, 0, element.color)
+    value_x = start_x + element.label_width
+    if element.value_parts is None:
+      rl.draw_text_ex(self._font_bold, element.val_text, rl.Vector2(value_x, y - font_size // 2), font_size, 0, element.color)
+    else:
+      for text, color in element.value_parts:
+        rl.draw_text_ex(self._font_bold, text, rl.Vector2(value_x, y - font_size // 2), font_size, 0, color)
+        value_x += measure_text_cached(self._font_bold, text, font_size, 0).x
 
     if element.unit:
       rl.draw_text_ex(self._font_bold, element.unit_text, rl.Vector2(start_x + element.label_width + element.val_width, y - font_size // 2),
