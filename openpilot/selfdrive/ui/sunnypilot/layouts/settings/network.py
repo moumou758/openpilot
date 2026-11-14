@@ -14,8 +14,8 @@ from openpilot.system.ui.widgets.network import NetworkUI, PanelType
 
 
 class NetworkUISP(NetworkUI):
-  def __init__(self, wifi_manager):
-    super().__init__(wifi_manager)
+  def __init__(self, wifi_manager, manage_activity: bool = True):
+    super().__init__(wifi_manager, manage_activity)
 
     self.scan_button = Button(tr("Scan"), self._scan_clicked, button_style=ButtonStyle.NORMAL, font_size=60, border_radius=30)
     self.scan_button.set_rect(rl.Rectangle(0, 0, 400, 100))
