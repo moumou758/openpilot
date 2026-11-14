@@ -72,11 +72,12 @@ class NavButton(Widget):
 
 
 class NetworkUI(Widget):
-  def __init__(self, wifi_manager: WifiManager):
+  def __init__(self, wifi_manager: WifiManager, manage_activity: bool = True):
     super().__init__()
     self._wifi_manager = wifi_manager
+    self._manage_activity = manage_activity
     self._current_panel: PanelType = PanelType.WIFI
-    self._wifi_panel = self._child(WifiManagerUI(wifi_manager))
+    self._wifi_panel = self._child(WifiManagerUI(wifi_manager, manage_activity))
     self._advanced_panel = self._child(AdvancedNetworkSettings(wifi_manager))
     self._nav_button = self._child(NavButton(tr("Advanced")))
     self._nav_button.set_click_callback(self._cycle_panel)
@@ -277,9 +278,10 @@ class AdvancedNetworkSettings(Widget):
 
 
 class WifiManagerUI(Widget):
-  def __init__(self, wifi_manager: WifiManager):
+  def __init__(self, wifi_manager: WifiManager, manage_activity: bool = True):
     super().__init__()
     self._wifi_manager = wifi_manager
+    self._manage_activity = manage_activity
     self.state: UIState = UIState.IDLE
     self._state_network: Network | None = None  # for CONNECTING / NEEDS_AUTH / SHOW_FORGET_CONFIRM / FORGETTING
     self._password_retry: bool = False  # for NEEDS_AUTH
@@ -303,11 +305,13 @@ class WifiManagerUI(Widget):
   def show_event(self):
     super().show_event()
     # start/stop scanning when widget is visible
-    self._wifi_manager.set_active(True)
+    if self._manage_activity:
+      self._wifi_manager.set_active(True)
 
   def hide_event(self):
     super().hide_event()
-    self._wifi_manager.set_active(False)
+    if self._manage_activity:
+      self._wifi_manager.set_active(False)
 
   def _load_icons(self):
     for icon in STRENGTH_ICONS + ["icons/checkmark.png", "icons/circled_slash.png", "icons/lock_closed.png"]:
