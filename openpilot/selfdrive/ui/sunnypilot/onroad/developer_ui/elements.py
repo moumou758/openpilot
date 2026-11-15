@@ -363,7 +363,7 @@ class EgpuElement:
     model_name = self._model_name(source)
     name_color = rl.Color(0, 255, 0, 200) if state == "disconnected" else status_labels.get(state, ("未知", rl.WHITE))[1]
     value_parts = [("● ", rl.WHITE), (model_name, name_color)]
-    if state != "disconnected":
+    if state not in ("disconnected", "active"):
       status_text, status_color = status_labels.get(state, ("未知", rl.WHITE))
       value_parts.extend([(" ", rl.WHITE), (status_text, status_color)])
     if state == "active" and sm.valid["chestnutState"]:
