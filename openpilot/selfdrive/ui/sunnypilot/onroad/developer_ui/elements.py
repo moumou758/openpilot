@@ -30,7 +30,7 @@ class UiElement:
   value_parts: list[tuple[str, rl.Color]] | None = None
 
   def measure(self, font, font_size: int):
-    self.label_text = f"{self.label} "
+    self.label_text = f"{self.label} " if self.label else ""
     self.val_text = self.value
     self.unit_text = f" {self.unit}" if self.unit else ""
 
@@ -375,7 +375,7 @@ class EgpuElement:
         (f"{telemetry.fanSpeedRpm}", rl.Color(0, 255, 0, 200)), ("rpm", rl.WHITE),
       ])
     value = "".join(text for text, _ in value_parts)
-    return UiElement(value, "egpu", "", name_color, value_parts=value_parts)
+    return UiElement(value, "", "", name_color, value_parts=value_parts)
 
 
 class SteeringTorqueEpsElement:
