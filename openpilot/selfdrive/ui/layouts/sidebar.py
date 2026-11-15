@@ -207,9 +207,21 @@ class Sidebar(Widget, SidebarSP):
 
     # Network type text
     text_y = rect.y + 247
-    text_pos = rl.Vector2(rect.x + 58, text_y)
-    network_text = self._wifi_manager.ipv4_address if self._wifi_manager and self._wifi_manager.ipv4_address else tr(self._net_type)
-    rl.draw_text_ex(self._font_regular, network_text, text_pos, FONT_SIZE, 0, Colors.WHITE)
+    ip_address = self._wifi_manager.ipv4_address if self._wifi_manager else ""
+    network_text = ip_address or tr(self._net_type)
+    font_size = FONT_SIZE
+    text_x = rect.x + 58
+
+    if ip_address:
+      available_width = rect.width - 32
+      text_width = measure_text_cached(self._font_regular, network_text, font_size).x
+      if text_width > available_width:
+        font_size = max(1, int(font_size * available_width / text_width))
+      text_width = measure_text_cached(self._font_regular, network_text, font_size).x
+      text_x = rect.x + (rect.width - text_width) / 2
+
+    text_pos = rl.Vector2(text_x, text_y)
+    rl.draw_text_ex(self._font_regular, network_text, text_pos, font_size, 0, Colors.WHITE)
 
   def _draw_metrics(self, rect: rl.Rectangle):
     if gui_app.sunnypilot_ui():
