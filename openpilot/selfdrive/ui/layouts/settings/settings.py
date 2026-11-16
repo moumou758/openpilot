@@ -47,17 +47,19 @@ class PanelInfo:
 
 
 class SettingsLayout(Widget):
-  def __init__(self):
+  def __init__(self, wifi_manager: WifiManager | None = None):
     super().__init__()
     self._current_panel = PanelType.DEVICE
 
     # Panel configuration
-    wifi_manager = WifiManager()
-    wifi_manager.set_active(False)
+    self._manage_wifi_activity = wifi_manager is None
+    self._wifi_manager = wifi_manager or WifiManager()
+    if self._manage_wifi_activity:
+      self._wifi_manager.set_active(False)
 
     self._panels = {
       PanelType.DEVICE: PanelInfo(tr_noop("Device"), DeviceLayout()),
-      PanelType.NETWORK: PanelInfo(tr_noop("Network"), NetworkUI(wifi_manager)),
+      PanelType.NETWORK: PanelInfo(tr_noop("Network"), NetworkUI(self._wifi_manager, manage_activity=self._manage_wifi_activity)),
       PanelType.TOGGLES: PanelInfo(tr_noop("Toggles"), TogglesLayout()),
       PanelType.SOFTWARE: PanelInfo(tr_noop("Software"), SoftwareLayout()),
       PanelType.FIREHOSE: PanelInfo(tr_noop("Firehose"), FirehoseLayout()),

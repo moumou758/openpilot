@@ -7,6 +7,7 @@ from openpilot.selfdrive.ui.ui_state import ui_state
 from openpilot.system.ui.lib.application import gui_app, FontWeight, MousePos, FONT_SCALE
 from openpilot.system.ui.lib.multilang import tr, tr_noop
 from openpilot.system.ui.lib.text_measure import measure_text_cached
+from openpilot.system.ui.lib.wifi_manager import WifiManager
 from openpilot.system.ui.widgets import Widget
 
 from openpilot.selfdrive.ui.sunnypilot.layouts.sidebar import SidebarSP
@@ -65,9 +66,10 @@ class MetricData:
 
 
 class Sidebar(Widget, SidebarSP):
-  def __init__(self):
+  def __init__(self, wifi_manager: WifiManager | None = None):
     Widget.__init__(self)
     SidebarSP.__init__(self)
+    self._wifi_manager = wifi_manager
     self._net_type = NETWORK_TYPES[NetworkType.none]
     self._net_strength = 0
 
@@ -205,8 +207,21 @@ class Sidebar(Widget, SidebarSP):
 
     # Network type text
     text_y = rect.y + 247
-    text_pos = rl.Vector2(rect.x + 58, text_y)
-    rl.draw_text_ex(self._font_regular, tr(self._net_type), text_pos, FONT_SIZE, 0, Colors.WHITE)
+    ip_address = self._wifi_manager.ipv4_address if self._wifi_manager else ""
+    network_text = ip_address or tr(self._net_type)
+    font_size = FONT_SIZE
+    text_x = rect.x + 58
+
+    if ip_address:
+      available_width = rect.width - 32
+      text_width = measure_text_cached(self._font_regular, network_text, font_size).x
+      if text_width > available_width:
+        font_size = max(1, int(font_size * available_width / text_width))
+      text_width = measure_text_cached(self._font_regular, network_text, font_size).x
+      text_x = rect.x + (rect.width - text_width) / 2
+
+    text_pos = rl.Vector2(text_x, text_y)
+    rl.draw_text_ex(self._font_regular, network_text, text_pos, font_size, 0, Colors.WHITE)
 
   def _draw_metrics(self, rect: rl.Rectangle):
     if gui_app.sunnypilot_ui():
