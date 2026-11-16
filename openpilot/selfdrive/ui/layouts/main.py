@@ -10,6 +10,7 @@ from openpilot.selfdrive.ui.onroad.augmented_road_view import AugmentedRoadView
 from openpilot.selfdrive.ui.ui_state import device, ui_state
 from openpilot.selfdrive.ui.layouts.onboarding import OnboardingWindow
 from openpilot.selfdrive.ui.body.layouts.onroad import BodyLayout
+from openpilot.system.ui.lib.wifi_manager import WifiManager
 
 if gui_app.sunnypilot_ui():
   from openpilot.selfdrive.ui.sunnypilot.layouts.settings.settings import SettingsLayoutSP as SettingsLayout
@@ -28,7 +29,9 @@ class MainLayout(Widget):
 
     self._pm = messaging.PubMaster(['bookmarkButton', 'userBookmark'])
 
-    self._sidebar = Sidebar()
+    self._wifi_manager = WifiManager()
+    self._wifi_manager.set_active(True)
+    self._sidebar = Sidebar(self._wifi_manager)
     self._current_mode = MainState.HOME
     self._prev_onroad = False
 
@@ -37,7 +40,7 @@ class MainLayout(Widget):
     self._home_body_layout = BodyLayout()
     self._layouts: dict[MainState, Widget] = {
       MainState.HOME: self._home_layout,
-      MainState.SETTINGS: SettingsLayout(),
+      MainState.SETTINGS: SettingsLayout(self._wifi_manager),
       MainState.ONROAD: AugmentedRoadView(),
     }
 
