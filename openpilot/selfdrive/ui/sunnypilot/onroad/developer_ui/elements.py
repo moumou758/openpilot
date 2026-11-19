@@ -363,12 +363,11 @@ class EgpuElement:
     source = "qcom" if state == "disconnected" else "chestnut"
     model_name = self._model_name(source)
     name_color = rl.Color(0, 255, 0, 200) if state == "disconnected" else status_labels.get(state, ("未知", rl.WHITE))[1]
-    personality = sm["selfdriveState"].personality if sm.valid["selfdriveState"] else log.LongitudinalPersonality.standard
     personality_color = {
       log.LongitudinalPersonality.aggressive: rl.Color(206, 120, 236, 255),
       log.LongitudinalPersonality.standard: rl.WHITE,
       log.LongitudinalPersonality.relaxed: rl.Color(0, 255, 0, 200),
-    }.get(personality, rl.WHITE)
+    }.get(ui_state.personality, rl.WHITE)
     value_parts = [("● ", personality_color), (model_name, name_color)]
     if state not in ("disconnected", "active"):
       status_text, status_color = status_labels.get(state, ("未知", rl.WHITE))

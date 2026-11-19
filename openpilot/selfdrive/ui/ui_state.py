@@ -163,6 +163,9 @@ class UIState(UIStateSP):
       time.sleep(PARAM_UPDATE_TIME)
 
   def _update_state(self) -> None:
+    if self.sm.updated["selfdriveState"]:
+      self.personality = self.sm["selfdriveState"].personality
+
     # Handle panda states updates
     if self.sm.updated["pandaStates"]:
       panda_states = self.sm["pandaStates"]
