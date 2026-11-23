@@ -1497,7 +1497,7 @@ msgstr "请关闭辅助驾驶功能后再进入 设置模式"
 
 msgid "Disengage: ALC will disengage when the brake pedal is pressed."
 msgstr ""
-"解除：踩刹车即解除自动车道居中（ALC）"
+"关闭：踩刹车即解除自动车道居中（ALC）"
 
 msgid "Display"
 msgstr "屏幕设置"
