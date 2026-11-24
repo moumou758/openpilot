@@ -374,9 +374,12 @@ class EgpuElement:
     if state not in ("disconnected", "active"):
       status_text, status_color = status_labels.get(state, ("未知", rl.WHITE))
       value_parts.extend([(" ", rl.WHITE), (status_text, status_color)])
+      if state in ("uncompiled", "failed"):
+        value_parts.extend([(" | ", rl.WHITE), (self._model_name("qcom"), rl.Color(0, 255, 0, 200))])
     if state == "active" and sm.valid["chestnutState"]:
       telemetry = sm["chestnutState"]
       value_parts.extend([
+        (" | ", rl.WHITE),
         (f" {telemetry.tempC:.0f}", rl.Color(0, 255, 0, 200)), ("°C ", rl.WHITE),
         (f"{telemetry.gpuUsagePercent}", rl.Color(0, 255, 0, 200)), ("% ", rl.WHITE),
         (f"{telemetry.powerDrawW:.0f}", rl.Color(0, 255, 0, 200)), ("W ", rl.WHITE),
