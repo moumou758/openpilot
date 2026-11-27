@@ -1462,7 +1462,7 @@ msgid "Default Model"
 msgstr "默认模型"
 
 msgid "Default: Device will boot/wake-up normally & will be ready to engage."
-msgstr "默认：设备正常启动并进入行驶模式，可随时启用辅助驾驶。"
+msgstr "默认：设备正常启动并进入 行驶模式，可随时启用辅助驾驶。"
 
 msgid "Delay before lateral control resumes after the turn signal ends."
 msgstr ""
@@ -1567,7 +1567,7 @@ msgstr ""
 "在设备面板中启用 设置模式 ，或关闭车辆进行切换。"
 
 msgid "Enable Always Offroad"
-msgstr "点击进入  设置模式 "
+msgstr "点击进入 设置模式 "
 
 msgid "Enable Custom Tuning"
 msgstr "启用自定义调校"
@@ -1700,7 +1700,7 @@ msgid "Error: Invalid download. Retry."
 msgstr "错误：下载失败。重试。"
 
 msgid "Exit Always Offroad"
-msgstr "点击进入  行驶模式 "
+msgstr "点击进入 行驶模式 "
 
 msgid ""
 "Experimental feature to enable auto-resume during stop-and-go for certain "
@@ -1810,7 +1810,7 @@ msgid "Screen Saver Duration"
 msgstr "屏幕保护时长"
 
 msgid "Show a screen saver when the device is offroad and idle, instead of turning the screen off."
-msgstr "当车辆处于设置模式且空闲时，将会显示屏幕保护程序，而非关闭屏幕。"
+msgstr "当车辆处于 设置模式 且空闲时，将会显示屏幕保护程序，而非关闭屏幕。"
 
 msgid "How long the screen saver runs before the screen turns off."
 msgstr "屏幕保护程序运行多久后关闭屏幕。"
