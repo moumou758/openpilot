@@ -40,37 +40,6 @@ if ! command -v scons &>/dev/null && [ -f /usr/local/venv/bin/scons ]; then
   export PATH="/usr/local/venv/bin:$PATH"
 fi
 
-# Check GitHub SSH authentication before replacing the release worktree.
-mkdir -p "$HOME/.ssh"
-sudo chown -R comma:comma "$HOME/.ssh"
-chmod 700 "$HOME/.ssh"
-cat > "$HOME/.ssh/config" <<'SSH_CONFIG'
-Host github.com
-  HostName ssh.github.com
-  Port 443
-  User git
-  UserKnownHostsFile /data/ssh/known_hosts
-  StrictHostKeyChecking no
-  IdentityFile /data/ssh/id_ed25519
-SSH_CONFIG
-chown comma:comma "$HOME/.ssh/config"
-chmod 600 "$HOME/.ssh/config"
-
-env | grep -i proxy || true
-cat /etc/environment 2>/dev/null | grep -i proxy || true
-cat "$HOME/.profile" 2>/dev/null | grep -i proxy || true
-ssh -vT -o HostKeyAlias=github.com -p 443 git@ssh.github.com 2>&1 || true
-unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY all_proxy ALL_PROXY
-
-# Run the same command as the manual verification as comma. The release script
-# itself runs as root, and changing HOME alone does not change SSH's user context.
-ssh_auth_output="$(sudo -u comma -H env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY ssh -T git@github.com 2>&1 || true)"
-printf '%s\n' "$ssh_auth_output"
-if ! printf '%s\n' "$ssh_auth_output" | grep -Fq "You've successfully authenticated"; then
-  echo "[!] GitHub SSH authentication failed; aborting release build" >&2
-  exit 1
-fi
-
 BUILD_BRANCH="XL-tl-newn-tici"
 
 
