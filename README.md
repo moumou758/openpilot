@@ -1,7 +1,107 @@
 <div align="center" style="text-align: center;">
 
-<h1>openpilot</h1>
+<h1>For Jungle</h1>
 
+## 按 `tools/README.md` 中的方法克隆到本地、安装脚本并进行构建
+
+第一步克隆修改为：
+
+```bash
+git clone -b master-jungle-261128 --recurse-submodules https://github.com/moumou758/openpilot.git master-jungle-261128
+```
+
+克隆完成后，按照 `tools/README.md` 的方式运行依赖安装和构建：
+
+```bash
+cd master-jungle-261128
+tools/op.sh setup
+source .venv/bin/activate
+scons -u -j$(nproc)
+```
+
+### 数据存放目录
+
+如果离线数据存放于：
+
+```text
+/home/mmoo758/data/tsl/2026-11-15--16-35-41--4
+```
+
+### 进入虚拟环境方法，以下需要在虚拟环境中运行
+```bash
+source .venv/bin/activate
+```
+
+### 如需要退出虚拟环境
+```bash
+deactivate
+```
+
+### CAN 回放
+
+使用本地分段的 `rlog.zst` 文件运行：
+
+```bash
+tools/replay/can_replay.py /home/mmoo758/data/tsl/2026-11-15--16-35-41--4/rlog.zst
+```
+
+### Replay 方法
+
+终端窗口一运行：
+
+```bash
+tools/replay/replay "0000000000000000|2026-11-15--16-35-41" --data_dir="/home/mmoo758/data/tsl"
+```
+
+如果在项目根目录下使用 `data/tsl`，也可以运行：
+
+```bash
+tools/replay/replay "0000000000000000|2026-11-15--16-35-41" --data_dir="data/tsl"
+```
+
+终端窗口二运行：
+
+```bash
+openpilot/selfdrive/ui/ui.py
+```
+
+如果分辨率太高：
+
+```bash
+SCALE=0.6 python3 openpilot/selfdrive/ui/ui.py
+```
+
+### 雷达可视化（我还不会用）
+
+终端窗口一：
+
+```bash
+tools/replay/replay "0000000000000000|2026-11-15--16-35-41" --data_dir="/home/mmoo758/data/tsl"
+```
+
+终端窗口二：
+
+```bash
+python3 tools/replay/rp_visualization.py
+```
+
+### watch3 方法
+
+播放道路和广角两个摄像头画面。
+
+终端窗口一：
+
+```bash
+tools/replay/replay "0000000000000000|2026-11-15--16-35-41" --data_dir="/home/mmoo758/data/tsl" --dcam --ecam
+```
+
+终端窗口二：
+
+```bash
+selfdrive/ui/watch3
+```
+
+---
 <p>
   <b>openpilot is an operating system for robotics.</b>
   <br>
